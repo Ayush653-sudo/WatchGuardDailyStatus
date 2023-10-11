@@ -31,6 +31,8 @@ namespace AccessModifier
             cookie.Expiry = DateTime.Now;
             Console.WriteLine(cookie.Expiry.ToString());
             timer.calculateEndTime();
+            Experiments_Access_modifiers o1 = new Experiments_Access_modifiers();
+            o1.check();
 
 
         }
