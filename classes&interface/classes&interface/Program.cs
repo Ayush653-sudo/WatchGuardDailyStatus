@@ -6,7 +6,14 @@ using System.Globalization;
 
 namespace Classes
 {    
-
+    //interface ayu
+    //{
+    //    static public int a;
+    //    static public void aa()
+    //    {
+    //        Console.WriteLine("dd");
+    //    }
+    //}
     class People
     {
         public string Name =   "yahoo!";
@@ -34,7 +41,7 @@ namespace Classes
     {
         static void Main(String[] args)
         {
-
+          
             int ks = 90;
             People p1=new People();
             
