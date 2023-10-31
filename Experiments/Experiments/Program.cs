@@ -18,10 +18,21 @@ namespace area
         public readonly int myvar1;  //can't declare inside the function,it is a run time constant
         static void Main(string[] args)
         {
+
+            List<int> list = new List<int>{ 1, 2, 3, 4 };
+
+            var dict = from num in list
+                       select new Dictionary<int, int> { [num] = num };
+
+            foreach(var v in dict)
+            {
+                Console.WriteLine(v.Keys);
+            }
+
             //About Nullable non-primitive data-type can be null but primitive needs extra supports 
             //suppose we have bool variable named areyoumajor and you do not want to give either true or false
             //we can't assign non nullable data type to a nullable data-type directly
-            bool? areYoumajor = null;
+            bool ? areYoumajor = null;
             //  bool justfordemo = (bool)areYoumajor; or bool justfordemo=areYoumajor??0;
             //  Console.WriteLine(areYoumajor);
 

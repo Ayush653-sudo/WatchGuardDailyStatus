@@ -1,0 +1,13 @@
+[
+  {
+    "clinicName": "AJHOSPITAL24",
+    "category": 1,
+    "availability": true,
+    "maxAppointment": 1,
+    "userName": "drayush",
+    "password": "Ayush@22",
+    "emailAddress": "ayush@gmail.com",
+    "phoneNumber": "9636653732",
+    "userType": 2
+  }
+]

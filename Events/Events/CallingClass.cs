@@ -5,11 +5,15 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Events
-{           
+{        public class VideoEventArgs:EventArgs
+    {
+        public Video Video { get; set; }
+    } 
     public class VideoEncoder 
     {
-        public delegate void VideoEncodedEventHandler(object source, EventArgs args);
-        public event VideoEncodedEventHandler VideoEncoded;
+        public delegate void VideoEncodedEventHandler(object source, VideoEventArgs args)//or VideoEncodedEventHandler(object source, VideoEventArgs args);
+        //public event VideoEncodedEventHandler VideoEncoded;
+        public event EventHandler<VideoEventArgs> VideoEncoded;
         public void Encode(Video video)
         {
             Console.WriteLine("Encoding Video..");
@@ -17,10 +21,11 @@ namespace Events
             onVideoEncoded();
         }
         protected void onVideoEncoded()
-        {
+        {    
             if (VideoEncoded != null)
             {
-                VideoEncoded(this,EventArgs.Empty);
+                //Console.WriteLine("in onVideoEncoded");
+                VideoEncoded(this,new VideoEventArgs() { Video=video});
             }
         }
     }

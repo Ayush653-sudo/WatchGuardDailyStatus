@@ -18,7 +18,8 @@ namespace EventAndDelegates
     {
         public void onVideoEncoded(object source,EventArgs e)
         {
-
+            Console.WriteLine("MailService: Sending an email...");
+            Thread.Sleep(1000);
         }
     }
 }
