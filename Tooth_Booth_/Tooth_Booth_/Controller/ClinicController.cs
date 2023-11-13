@@ -1,69 +1,71 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+using Tooth_Booth_.Controller.ControllerInterfaces;
+using Tooth_Booth_.DatabaseHandler;
 using Tooth_Booth_.models;
 using Tooth_Booth_.View;
 
 namespace Tooth_Booth_.Controller
 {
 
-    interface IClinicController
-    {
-       List<Dentist> GetDentistAtClinic(Clinic clinic);
-       bool RegisterNewDentist(Dentist updatedDentist);
-       bool DeleteDentist(Clinic clinic, string userName);
 
-    }
 
-   class ClinicController:IClinicController
+    class ClinicController : IClinicController
     {
-      
-        public List<Dentist> GetDentistAtClinic(Clinic clinic)
+
+
+        public List<String> GetListOFClinicByCityName(string cityName)
         {
+            List<String> list = new List<String>();
+            list = ClinicDBHandler.handler.listOfClinic.FindAll((obj) => obj.clinicCity == cityName && obj.isverified == true).Select((obj) => obj.clinicName).ToList();
+            return list;
 
-            List<Dentist> listOfDentistAtClinic = new List<Dentist>();
-            foreach (var obj in DBController.handler.listOfDentist)
-            {
-                if (obj.clinicName == clinic.userName)
-                    listOfDentistAtClinic.Add(obj);
-            }
-            return listOfDentistAtClinic;
+        }
+        public List<Clinic> GeListOfAllClinic()
+        {
+            return ClinicDBHandler.handler.listOfClinic;
+        }
+
+
+        public Clinic GetClinicByClinicName(string clinicName)
+        {
+            return ClinicDBHandler.handler.listOfClinic.Find((obj) => obj.clinicName == clinicName)!;
 
         }
 
-        public bool RegisterNewDentist(Dentist dentist)
+        public bool UpdateClinic(Clinic updatedClinic)
         {
 
-            return DBController.handler.AddEntryAtDB(dentist);
+            int index = ClinicDBHandler.handler.listOfClinic.FindIndex((obj) => obj.clinicName == updatedClinic.clinicName);
 
-        }
+           ClinicDBHandler.handler.listOfClinic[index] = updatedClinic;
 
-        public bool DeleteDentist(Clinic clinic,string userName)
-        {
-
-            int index = DBController.handler.listOfDentist.FindIndex((obj) => obj.userName == userName && clinic.userName == obj.clinicName);
-            if (index == -1)
-            {
-                Message.Invalid("No dentist found");
-                return false;
-            }
-
-            int k = DBController.handler.listOfAppointment.FindIndex((obj) => obj.doctorUserName == userName && obj.appointmentDate == DateTime.Today);
-            if (k != -1)
-            {
-
-                Message.Invalid("You cant delete him he has appointment with patients: ");
-                return false;
-            }
-
-            DBController.handler.listOfDentist.RemoveAt(index);
-
-            if (DBController.handler.UpdateEntryAtDB<Dentist>(DBController.handler.dentistPath, DBController.handler.listOfDentist))
+            if (ClinicDBHandler.handler.UpdateEntryAtDB<Clinic>(ClinicDBHandler.handler.clinicPath, ClinicDBHandler.handler.listOfClinic))
                 return true;
             else
                 return false;
+
+        }
+
+        public bool DeleteClinic(Clinic clinic)
+        {
+            int index = ClinicDBHandler.handler.listOfClinic.FindIndex((obj) => obj.clinicName == clinic.clinicName);
+            if (index == -1)
+            {
+                Message.Invalid("No Clinic Found With Given UserName");
+                return false;
+            }
+            index = UserDBHandler.handler.listOfUser.FindIndex((obj) => obj.userName == clinic.listOFClinicAdmin[0]);
+            UserDBHandler.handler.listOfUser.Remove(UserDBHandler.handler.listOfUser[index]);
+            ClinicDBHandler.handler.listOfClinic.Remove(clinic);
+            DentistDBHandler.handler.listOfDentist.RemoveAll(dentist => dentist.clinicName == clinic.clinicName);
+            
+            if (!ClinicDBHandler.handler.UpdateEntryAtDB<Clinic>(ClinicDBHandler.handler.clinicPath, ClinicDBHandler.handler.listOfClinic))
+                return false;
+            if (!DentistDBHandler.handler.UpdateEntryAtDB<Dentist>(DentistDBHandler.handler.dentistPath, DentistDBHandler.handler.listOfDentist))
+                return false;
+            if(!UserDBHandler.handler.UpdateEntryAtDB<User>(UserDBHandler.handler.userPath,UserDBHandler.handler.listOfUser))
+                return false;
+            return true;
 
         }
     }

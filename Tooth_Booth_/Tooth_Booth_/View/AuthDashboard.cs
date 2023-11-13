@@ -1,50 +1,55 @@
-﻿using System;
-using System.Reflection.Emit;
+﻿
 using Tooth_Booth_.common;
-using Tooth_Booth_.Controller;
-using Tooth_Booth_.database;
+using Tooth_Booth_.common.Enums;
+using Tooth_Booth_.DatabaseHandler;
 using Tooth_Booth_.models;
-using Tooth_Booth_.View;
+
+using Tooth_Booth_.View.Interfaces;
 
 namespace ThoothTooth_Booth_.View
 {
 
+    public class AuthDashboard : IAuthDashboard
+    {
 
-	public class AuthDashboard
-	{
-
-       
-        public Dictionary<string,string> LogInView()
+        public Dictionary<string, string> LogInView()
         {
 
             Console.WriteLine("-------------------------------------------LOGIN------------------------------------------");
-         
 
-   label:   Console.WriteLine("Enter your userName: ");
+
+        userLabel: Console.WriteLine(PrintStatements.userNamePrint);
             var userName = Console.ReadLine()!.Trim();
-            Console.WriteLine("Enter your password: ");
-            var password = Console.ReadLine()!.Trim();
-            if(Common.NullCheck(userName)||Common.NullCheck(password))
+            if (CheckValidity.NullCheck(userName))
             {
-                Console.WriteLine("Fields can't Be Null Or Empty");
-                goto label;
+                Console.WriteLine(PrintStatements.erroruserNamePrint);
+                goto userLabel;
             }
-            Dictionary<string,string>dict=new Dictionary<string,string>();
+        passLabel: Console.WriteLine(PrintStatements.passwordPrint);
+
+            var password = RegistrationFoam.MaskPassword().Trim();
+            if (CheckValidity.NullCheck(password))
+            {
+                Console.WriteLine(PrintStatements.errrorPasswordPrint);
+                goto passLabel;
+            }
+            Dictionary<string, string> dict = new Dictionary<string, string>();
             dict["username"] = userName;
             dict["password"] = password;
             return dict;
-         
+
         }
 
-        public  dynamic RegistrationView()
-		{
-			Common.RegistrationStartView();
+        public User RegistrationView()
+        {
+            Console.WriteLine(PrintStatements.registrationStartView);
             int key;
-			if( !int.TryParse(Console.ReadLine(),out key))
+            if (!int.TryParse(Console.ReadLine(), out key))
             {
-                Console.WriteLine("Enter a valid choice");
+                Console.WriteLine(PrintStatements.giveCorrectInput);
             }
             var keyPressed = (Registrationstarter)key;
+
 
             try
             {
@@ -52,11 +57,11 @@ namespace ThoothTooth_Booth_.View
                 switch (keyPressed)
                 {
                     case Registrationstarter.PatientRegistration:
-                        return RegistrationFoam.PatientsRegistrationDetails();
-                        
+                        return RegistrationFoam.GetUserDetails(3);
+
                     case Registrationstarter.ClinicRegistration:
-                        return RegistrationFoam.ClinicRegistrationDetails();
-                        
+                        return RegistrationFoam.GetUserDetails(1);
+
 
                     case Registrationstarter.GoBack:
                         Program.StartApp();
@@ -69,17 +74,21 @@ namespace ThoothTooth_Booth_.View
                 }
 
             }
-            catch
+            catch (Exception ex) 
             {
+                ExceptionDBHandler.handler.AddEntryAtDB<String>(ExceptionDBHandler.handler.ExceptionPath, ex.ToString(), ExceptionDBHandler.handler.ListOfException);
                 Console.WriteLine("SomeThing Went Wrong ");
             }
             return null;
-          
 
-		}
-      
 
-	}
+        }
+
+
+
+
+
+    }
 
 
 }

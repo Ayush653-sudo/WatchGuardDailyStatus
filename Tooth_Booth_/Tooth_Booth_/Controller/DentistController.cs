@@ -3,65 +3,117 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Tooth_Booth_.Controller.ControllerInterfaces;
+using Tooth_Booth_.database;
+using Tooth_Booth_.DatabaseHandler;
 using Tooth_Booth_.models;
+using Tooth_Booth_.View;
 
 namespace Tooth_Booth_.Controller
 {
-    interface IDentistController
-    {
-        bool UpdateDentistAtDB(Dentist dentist);
-        List<Appointment> GetAppointmentByDates(Dentist dentist,DateTime dateTime);
 
-        Appointment GetAppointmentById(Dentist dentist,int id);
-
-        bool AddPrescriptionToPatient(Appointment appointment);
-
-    }
-    class DentistController:IDentistController
+    class DentistController : IDentistController
     {
 
         public bool UpdateDentistAtDB(Dentist dentist)
         {
-            int i = DBController.handler.listOfDentist.FindIndex((obj)=>obj.userName==dentist.userName);
-
-            
-                
-                    DBController.handler.listOfDentist[i] = dentist;
-                    if(DBController.handler.UpdateEntryAtDB<Dentist>(DBController.handler.dentistPath, DBController.handler.listOfDentist))
-                    return true;
-
-               
-            
-
+            int i = DentistDBHandler.handler.listOfDentist.FindIndex((obj) => obj.userName == dentist.userName);
+            DentistDBHandler.handler.listOfDentist[i] = dentist;
+            if (DentistDBHandler.handler.UpdateEntryAtDB<Dentist>(DentistDBHandler.handler.dentistPath, DentistDBHandler.handler.listOfDentist))
+                return true;
             return false;
         }
-
-
-        public List<Appointment> GetAppointmentByDates(Dentist dentist,DateTime dateTime)
+        public Dentist GetDentist(string userName)
         {
-
-            return DBController.handler.listOfAppointment.FindAll((obj) => obj.appointmentDate == dateTime && dentist.userName == obj.doctorUserName);
+            return DentistDBHandler.handler.listOfDentist.Find((obj) => obj.userName == userName)!;
         }
-        public Appointment GetAppointmentById(Dentist dentist,int id)
+        public Dictionary<String, String> GetDentistList(string clinicName)
+        {
+            Dictionary<string, string> dict = new Dictionary<string, string>();
+
+            foreach (var obj in DentistDBHandler.handler.listOfDentist)
+            {
+                if (obj.clinicName == clinicName && obj.availability == true && obj.maxAppointment > 0)
+                {
+                    dict[obj.userName] = obj.category.ToString();
+                }
+            }
+            return dict;
+        }
+
+        public List<Dentist> GetDentistAtClinic(string clinicUserName)
         {
 
-            return DBController.handler.listOfAppointment.Find((obj) => obj.appointmentId == id && dentist.userName == obj.doctorUserName)!;
+            List<Dentist> listOfDentistAtClinic = new List<Dentist>();
+            foreach (var obj in DentistDBHandler.handler.listOfDentist)
+            {
+                if (obj.clinicName == clinicUserName)
+                    listOfDentistAtClinic.Add(obj);
+            }
+            return listOfDentistAtClinic;
 
         }
 
-        public bool AddPrescriptionToPatient(Appointment appointment)
+        public bool RegisterNewDentistAtClinic(User user,Dentist dentist)
         {
 
-            int index = DBController.handler.listOfAppointment.FindIndex((obj) => obj.appointmentId == appointment.appointmentId);
-            DBController.handler.listOfAppointment[index] = appointment;
+            if (AuthController.isPresentEarlier(dentist.userName))
+            {
+                return false;
+            }
+            if (UserDBHandler.handler.AddEntryAtDB<User>(UserDBHandler.handler.userPath, user, UserDBHandler.handler.listOfUser))
+            {
 
-            if (DBController.handler.UpdateEntryAtDB<Appointment>(DBController.handler.appointmentPath, DBController.handler.listOfAppointment))
+                if( DentistDBHandler.handler.AddEntryAtDB<Dentist>(DentistDBHandler.handler.dentistPath, dentist, DentistDBHandler.handler.listOfDentist))
+                    return true;
+                else
+                {
+                    UserDBHandler.handler.listOfUser.Remove(user);
+                    return false;
+                }
+            }
+            return false;
+          
+
+        }
+
+        public bool DeleteDentistAtClinic(string clinicUserName, string userName)
+        {
+
+            int index = DentistDBHandler.handler.listOfDentist.FindIndex((obj) => userName == obj.userName && clinicUserName == obj.clinicName);
+            int userIndex=UserDBHandler.handler.listOfUser.FindIndex((obj)=>obj.userName == userName);
+            if (index == -1)
+            {
+                Message.Invalid("No dentist found");
+                return false;
+            }
+
+            int k = AppointmentDBHandler.handler.listOfAppointment.FindIndex((obj) => obj.doctorUserName == userName && obj.appointmentDate == DateTime.Today);
+            if (k != -1)
+            {
+
+                Message.Invalid("You cant delete him he has appointment with patients: ");
+                return false;
+            }
+
+            DentistDBHandler.handler.listOfDentist.RemoveAt(index);
+            UserDBHandler.handler.listOfUser.RemoveAt(userIndex);
+
+            if (DentistDBHandler.handler.UpdateEntryAtDB<Dentist>(DentistDBHandler.handler.dentistPath, DentistDBHandler.handler.listOfDentist))
+            {
+                if(UserDBHandler.handler.UpdateEntryAtDB<User>(UserDBHandler.handler.userPath, UserDBHandler.handler.listOfUser))
                 return true;
+                else
+                {
+                    return false;
+                }
+
+            }
             else
                 return false;
 
-
         }
+
 
     }
 }

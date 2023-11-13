@@ -1,18 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Tooth_Booth_.common;
+﻿
+using Tooth_Booth_.common.Enums;
 
 namespace Tooth_Booth_.models
 {
-     
-  
-
-
-     class User
-    {
+     public class User
+     {
         public string userName;
         public string password;
         public string emailAddress;
@@ -27,9 +19,8 @@ namespace Tooth_Booth_.models
             this.phoneNumber = phoneNumber;
             this.userType = userType;
         }
-       public User()
+        public User()
         {
-
         }
         public User(User user)
         {

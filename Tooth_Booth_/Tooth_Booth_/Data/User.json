@@ -1,0 +1,58 @@
+[
+  {
+    "userName": "ayush",
+    "password": "Ayush@22",
+    "emailAddress": "ayush@gmail.com",
+    "phoneNumber": "9636653732",
+    "userType": 3
+  },
+  {
+    "userName": "krishna",
+    "password": "Krishna@123",
+    "emailAddress": "krishna@gmail.com",
+    "phoneNumber": "9999999999",
+    "userType": 3
+  },
+  {
+    "userName": "Milind",
+    "password": "milind@12",
+    "emailAddress": "milind@gmail.com",
+    "phoneNumber": "9636653732",
+    "userType": 3
+  },
+  {
+    "userName": "Ayush",
+    "password": "Ayush@22",
+    "emailAddress": "ayushsinght70@gmail.com",
+    "phoneNumber": "9636653732",
+    "userType": 1
+  },
+  {
+    "userName": "drayush",
+    "password": "Ayush@22",
+    "emailAddress": "ayushsing@gmal.com",
+    "phoneNumber": "9436653732",
+    "userType": 2
+  },
+  {
+    "userName": "tomar",
+    "password": "Ayush@22",
+    "emailAddress": "ayush@gmail.com",
+    "phoneNumber": "9636653732",
+    "userType": 1
+  },
+  {
+    "userName": "akshat",
+    "password": "Akshat@22",
+    "emailAddress": "akshat@gmail.com",
+    "phoneNumber": "9636653732",
+    "userType": 3
+  },
+  {
+    "userName": "admin",
+    "password": "Admin@22",
+    "emailAddress": "admin@gmail.com",
+    "phoneNumber": "9636653732",
+    "userType": 0
+  }
+]

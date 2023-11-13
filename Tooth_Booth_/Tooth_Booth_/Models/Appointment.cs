@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Tooth_Booth_.common;
+﻿
+using Tooth_Booth_.common.Enums;
 
 namespace Tooth_Booth_.models
 {
   
-   class Appointment
+   public class Appointment
     {
        
         public int appointmentId;

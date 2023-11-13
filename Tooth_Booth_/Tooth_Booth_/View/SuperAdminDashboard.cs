@@ -1,31 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Mail;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+﻿
 using ThoothTooth_Booth_.View;
 using Tooth_Booth_.common;
-using Tooth_Booth_.Controller;
+using Tooth_Booth_.common.Enums;
+using Tooth_Booth_.Controller.ControllerInterfaces;
 using Tooth_Booth_.models;
+using Tooth_Booth_.View.Interfaces;
 
 namespace Tooth_Booth_.View
 {
-    public class SuperAdminView
-    {
-        ISuperAdminController superAdminController;
+    public class SuperAdminView:ISuperAdminView
 
-       internal SuperAdminView(ISuperAdminController superAdminController)
+    { 
+      public ISuperAdminController superAdminController { get; set; }
+      public IClinicController clinicController { get; set; }
+      public SuperAdminView(ISuperAdminController superAdminController, IClinicController clinicController)
         {
             this.superAdminController = superAdminController;
+            this.clinicController = clinicController;
         }
-        internal void StartSuperAdminView(SuperAdmin user)
+        public void StartSuperAdminView(User user)
         {
 
             while (true)
             {
-                Common.SuperAdminStartView();
+                Console.WriteLine();
+                Console.WriteLine(PrintStatements.superAdminMenu);
 
                 try
                 {
@@ -52,14 +51,15 @@ namespace Tooth_Booth_.View
                             LogOut(user); 
                             break;
                         default:
-                            Console.WriteLine("Enter Choice Correctly");
+                            Console.WriteLine(PrintStatements.choiceCorrectlyPrint);
                             break;
 
                     }
                 }
                 catch 
                 {
-                    Message.Invalid("Give Correct Input");
+                    Console.WriteLine(PrintStatements.giveCorrectInput);
+                  
 
                 }
 
@@ -69,57 +69,57 @@ namespace Tooth_Booth_.View
 
         }
 
-        void ViewListOfAvailableClinic(SuperAdmin user)
+
+       public void ViewListOfAvailableClinic(User user)
         {
-           List<Clinic>clinics= superAdminController.GeListOfClinic();
+           List<Clinic>clinics= clinicController.GeListOfAllClinic();
 
             if(clinics.Count==0)
             {
-                Console.WriteLine("No Clinic Availabl");
+                Console.WriteLine(PrintStatements.novAilableClinicPrint);
             }
            
-               Console.WriteLine("Following are the list of all clinic registeed at our website");
+               Console.WriteLine(PrintStatements.listOfClinicPrint);
 
             foreach(var obj in clinics) 
             {
                 
-                Console.WriteLine("ClinicName:       -> " + obj.clinicName);
-                Console.WriteLine("Description:      -> "+obj.description);
-                Console.WriteLine("Clinic user Name: -> " + obj.userName);
-                Console.WriteLine("City:             -> " + obj.clinicCity);
-                Console.WriteLine("IsVerifired:      -> "+obj.isverified);
+                Console.WriteLine(PrintStatements.clinicNameArrow+ obj.clinicName);
+                Console.WriteLine(PrintStatements.descriptionArrow + obj.description);
+                Console.WriteLine(PrintStatements.clinicCityArrow + obj.clinicCity);
+                Console.WriteLine(PrintStatements.verifiedArrow+obj.isverified);
+                Console.WriteLine();
 
             }
 
 
         }
 
-        internal void EditClinicDashboard(SuperAdmin superadmin)
+        public void EditClinicDashboard(User superadmin)
         {
 
-            clinicusername:Console.WriteLine("Enter Username of Clinic Whose Entry You want to change");
+            clinicusername:Console.WriteLine(PrintStatements.userNameClinicEntry);
             var userName = Console.ReadLine()!.Trim();
             if(String.IsNullOrEmpty(userName))
             {
-                Console.WriteLine("Fields can't be null or empty");
+                Console.WriteLine(PrintStatements.fieldCantNull);
                 goto clinicusername;
             }
-               Clinic obj=superAdminController.GetClinic(userName);
+               Clinic obj=clinicController.GetClinicByClinicName(userName);
             if(obj==null)
             {
-                Console.WriteLine("Kindly ReTry and enter correct userName");
+                Console.WriteLine(PrintStatements.enterUserNameCorrectly);
                 goto clinicusername;
             }
 
-            Console.WriteLine("" +
-                "You Could Only Change Following Fields:" +
-                "\n 1)Email: " + obj.emailAddress +
-                "\n 2)PhoneNumber : " + obj.phoneNumber +
-                "\n 3)Description: " + obj.description +
-                "\n 4)Verification Status: "+ obj.isverified +
-                "\n 5)To Go Back ");
+            Console.WriteLine("" 
+                + PrintStatements.changableFields +
+                PrintStatements.clinicNameArrow + obj.clinicName +
+                PrintStatements.description + obj.description +
+                PrintStatements.verificationStatusShow+ obj.isverified +
+                PrintStatements.goToBack);
 
-        label: Console.WriteLine("Enter Your Choice From Above Option");
+        label: Console.WriteLine(PrintStatements.chooseOption);
             EditClinic pressedKey;
             try
             {
@@ -127,46 +127,38 @@ namespace Tooth_Booth_.View
             }
             catch
             {
-                Console.WriteLine("Please Enter numeric Term");
+                Console.WriteLine(PrintStatements.numericEntryOnly);
                 goto label;
             }
             switch (pressedKey)
             {
                 case EditClinic.Email:
-                 emailentry:   Console.WriteLine("Enter New Email Address");
-                    var newEmail = Console.ReadLine()!.Trim();
-                    obj.emailAddress = newEmail;
-                    if (!Common.CheckEmail(newEmail))
+                 clinicNameentry:   Console.WriteLine(PrintStatements.clinicNamePrint);
+                    var newClinicName = Console.ReadLine()!.Trim();
+                    
+                    if (!CheckValidity.NullCheck(newClinicName))
                     {
-                        Console.WriteLine("Please Enter A valid Email");
-                        goto emailentry;
+                        Console.WriteLine(PrintStatements.erorEmailPrint);
+                        goto clinicNameentry;
                     }
+                    obj.clinicName = newClinicName;
                     break;
 
-                case EditClinic.PhoneNumber:
-                 phoneretry:   Console.WriteLine("Enter New PhoneNumber");
-                   var newPhoneNumber = Console.ReadLine()!.Trim();
-                   bool isValidated = Common.hasnumber.IsMatch(newPhoneNumber);
-                    if (!isValidated)
-                    {
-                        Console.WriteLine("Enter valid phone number");
-                        goto phoneretry;
-                    }
-                    obj.phoneNumber = newPhoneNumber;
-                    break;
+                
 
                 case EditClinic.Description:
-                  clinicdescriptionretry:  Console.WriteLine("Enter New Description Of Your Clinic");
+                  clinicdescriptionretry:  Console.WriteLine(PrintStatements.clinicDescriptionPrint);
                     var description = Console.ReadLine()!.Trim();
-                    if (Common.CountWords(description)<6)
+                    if (!CheckValidity.CountWords(description, 6))
                     {
-                        Console.WriteLine("Description must contain Word more than 6 for description");
+                        Console.WriteLine(PrintStatements.errorDescriptionPrint);
                         goto clinicdescriptionretry;
                     }
+                    obj.description = description;
                     break;
 
                 case EditClinic.VerificationStatus:
-                    Console.WriteLine("Enter 1 To Change Verification status else any other key");
+                    Console.WriteLine(PrintStatements.enterToChange);
                     var pre = Console.ReadLine();
                     if(pre=="1")
                     obj.isverified = !obj.isverified;
@@ -177,68 +169,67 @@ namespace Tooth_Booth_.View
                     return;
 
                 default:
-                    Console.WriteLine("Please Choose Correct Option and Retry");
+                    Console.WriteLine(PrintStatements.choiceCorrectlyPrint);
                     goto label;
                     
             }
            
-            if (superAdminController.UpdateClinic(obj))
+            if (clinicController.UpdateClinic(obj))
             {
-                Console.WriteLine("----You have sucessfully updated the details-----");
+                Console.WriteLine(PrintStatements.updateSucessFully);
 
             }
             else
             {
-                Console.WriteLine("SomeThing Went Wrong Please Try Again");
+                Console.WriteLine(PrintStatements.someThingWentWrong);
             }
 
            
         }
 
 
-        void DeleteAnyClinic(SuperAdmin superadmin)
+        public void DeleteAnyClinic(User superadmin)
         {
 
-            usernameentry: Console.WriteLine("Enter Username of Clinic Whose Entry You want to change");
+            usernameentry: Console.WriteLine(PrintStatements.wantToChangeClinic);
             var userName = Console.ReadLine()!.Trim();
-            if(String.IsNullOrEmpty(userName))
+            if(CheckValidity.NullCheck(userName))
             {
-                Console.WriteLine("Empty Fieldsare not allowed");
+                Console.WriteLine(PrintStatements.fieldCantNull);
                 goto usernameentry;
             }
-            Clinic obj = superAdminController.GetClinic(userName);
+            Clinic obj = clinicController.GetClinicByClinicName(userName);
             if (obj == null)
             {
-                Console.WriteLine("Kindly ReTry and enter correct userName");
+                Console.WriteLine(PrintStatements.erroruserNamePrint);
                 goto usernameentry;
                
             }
             else
             {
-                if(superAdminController.DeleteClinic(userName))
+                if(clinicController.DeleteClinic(obj))
                 {
-                    Console.WriteLine("We Have Deleted Clininc:->" + obj.clinicName + "Sucessfully");
+                    Console.WriteLine(PrintStatements.deleteClinicArrow + obj.clinicName + PrintStatements.sucessful);
                 }
 
-
             }
 
         }
 
-        void AddMoreAdmin(SuperAdmin superadmin)
+       public void AddMoreAdmin(User superadmin)
         {
-            User user = RegistrationFoam.GetUserCommonDetails(0);
+            User user = RegistrationFoam.GetUserDetails(0);
 
             if (superAdminController.AddNewAdmin(user))
-                Console.WriteLine("New Admin Added SucessFully");
+                Console.WriteLine(PrintStatements.newAdminAdded);
             else
             {
-                Console.WriteLine("Something Went Wront");
+                Console.WriteLine(PrintStatements.someThingWentWrong);
             }
 
         }
 
-        void LogOut(SuperAdmin superadmin)
+       public void LogOut(User superadmin)
         {
             superadmin = null;
             Program.StartApp();

@@ -1,11 +1,1 @@
-[
-  {
-    "appointmentId": 663,
-    "patientsUserName": "ayush",
-    "doctorUserName": "drayush",
-    "appointmentDate": "2023-10-30T00:00:00+05:30",
-    "clinicName": "AJHOSPITAL24",
-    "prescription": "",
-    "paymentType": 2
-  }
-]
+[{"appointmentId":663,"patientsUserName":"ayush","doctorUserName":"drayush","appointmentDate":"2023-10-30T00:00:00+05:30","clinicName":"AJHOSPITAL24","prescription":"Took all medicines on time","paymentType":2}]

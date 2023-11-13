@@ -3,32 +3,32 @@ namespace WaitHandler
 {
     class Program
     {
-        static async Task Main(string[] args)
-        {
-            Task<int> result1 = LongProcess1();
-            Task<int> result2 = LongProcess2();
+        //static async Task Main(string[] args)
+        //{
+        //   LongProcess1();
+        //    Task<int> result2 = LongProcess2();
 
-            //do something here
-            Console.WriteLine("After two long processes.");
+        //    //do something here
+        //    Console.WriteLine("After two long processes.");
 
-            int val = await result1; // wait untile get the return value
-            DisplayResult(val);
+        //    int val = await result2; // wait untile get the return value
+        //    DisplayResult(val);
 
-            val = await result2; // wait untile get the return value
-            DisplayResult(val);
+        //    val = await result2; // wait untile get the return value
+        //    DisplayResult(val);
 
-            Console.ReadKey();
-        }
-
-        static async Task<int> LongProcess1()
+        //    Console.ReadKey();
+        //}
+        
+        static async void LongProcess1()
         {
             Console.WriteLine("LongProcess 1 Started");
 
-            await Task.Delay(4000); // hold execution for 4 seconds
+            await Task.Delay(4000); 
 
             Console.WriteLine("LongProcess 1 Completed");
 
-            return 10;
+          //  return 10;
         }
 
         static async Task<int> LongProcess2()

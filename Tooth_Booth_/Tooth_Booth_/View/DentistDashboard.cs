@@ -1,29 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
-using Tooth_Booth_.common;
-using Tooth_Booth_.Controller;
-using Tooth_Booth_.database;
+﻿using Tooth_Booth_.common;
+using Tooth_Booth_.common.Enums;
+using Tooth_Booth_.Controller.ControllerInterfaces;
+using Tooth_Booth_.Controller.Interfaces;
+using Tooth_Booth_.DatabaseHandler;
 using Tooth_Booth_.models;
+using Tooth_Booth_.View.Interfaces;
 
 namespace Tooth_Booth_.View
 {
-    internal class DentistDashboard
+    internal class DentistDashboard : IDentistDashboard
     {
-        IDentistController dentistController;
-
-        public DentistDashboard(IDentistController dentistController)
+       public IDentistController dentistController {  get; set; }
+       public IAppointmentControllerForDentist appointmentController { get; set; }
+        public DentistDashboard(IDentistController dentistController,IAppointmentControllerForDentist appointmentController)
         {
-            this.dentistController=dentistController;
+            this.dentistController = dentistController;
+            this.appointmentController = appointmentController;
         }
-        public void DentistDashboardView(Dentist dentist)
+        public void DentistDashboardView(User dentistUser)
         {
+
+            Dentist dentist = dentistController.GetDentist(dentistUser.userName);
             while (true)
             {
-                Common.DentistStartView();
+                Console.WriteLine();
+                Console.WriteLine(PrintStatements.dentistMenu);
 
                 try
                 {
@@ -45,203 +46,194 @@ namespace Tooth_Booth_.View
                         case DentistStarter.MaxAppointments:
                             SelectMaxAppointment(dentist);
                             break;
-                        
+
                         case DentistStarter.LogOut:
                             LogOut(dentist);
                             break;
 
                         default:
-                            Console.WriteLine("Enter Input Correctly");
+                            Console.WriteLine(PrintStatements.choiceCorrectlyPrint);
                             break;
 
                     }
-                    
+
 
                 }
-                catch
+                catch (Exception ex) 
                 {
-                    Message.Invalid("Give Correct Input");
+                    ExceptionDBHandler.handler.AddEntryAtDB<String>(ExceptionDBHandler.handler.ExceptionPath, ex.ToString(), ExceptionDBHandler.handler.ListOfException);
+                    Message.Invalid(PrintStatements.giveCorrectInput);
                 }
 
             }
         }
-         
-         
 
-        
+        void MarkAttendance(Dentist dentist)
+        {
 
-         void MarkAttendance(Dentist dentist)
-         {
-            
-          attendanceinput:  Console.WriteLine("Press 1 IF you are available at " + DateTime.Today.ToString("yy/MM/dd") +
-                            "\nElse Press 2 ");
-            Console.WriteLine("Enter Your Choice: ");
+        attendanceinput: Console.WriteLine(PrintStatements.dentistAvailable + DateTime.Today.ToString("yy/MM/dd") +
+                                   PrintStatements.press2);
+            Console.WriteLine(PrintStatements.choiceEnter);
 
 
-                Attendance pressedKey;
-                try
-                {
-                    pressedKey = (Attendance)Convert.ToInt32(Console.ReadLine());
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Please Enter Numeric Value");
-                    goto attendanceinput;
-                }
-                bool isPresent = false;
-
-                switch (pressedKey)
-                {
-                    case Attendance.Present:
-                        isPresent = true;
-                        break;
-                    case Attendance.Absent:
-                        isPresent = false;
-                        break;
-                    default:
-                        Console.WriteLine("Please Enter Correct Option");
-                        goto attendanceinput;
-                       
-
-                }
-                Dentist newDentist = dentist;
-                newDentist.availability = isPresent;
-
-                if (dentistController.UpdateDentistAtDB(newDentist))
-                {
-                    Console.WriteLine("Your Attendance is Marked Sucessfully!!! ");
-                }
-                else
-                {
-                    Message.Invalid("Something Went Wrong");
-
-                }
+            Attendance pressedKey;
+            try
+            {
+                pressedKey = (Attendance)Convert.ToInt32(Console.ReadLine());
             }
-            
-          
+            catch (Exception ex)
+            {
+                Console.WriteLine(PrintStatements.giveCorrectInput);
+                goto attendanceinput;
+            }
+            bool isPresent = false;
 
-        
+            switch (pressedKey)
+            {
+                case Attendance.Present:
+                    isPresent = true;
+                    break;
+                case Attendance.Absent:
+                    isPresent = false;
+                    break;
+                default:
+                    Console.WriteLine(PrintStatements.choiceCorrectlyPrint);
+                    goto attendanceinput;
+
+
+            }
+            Dentist newDentist = dentist;
+            newDentist.availability = isPresent;
+
+            if (dentistController.UpdateDentistAtDB(newDentist))
+            {
+                Console.WriteLine(PrintStatements.attendanceMarked);
+            }
+            else
+            {
+                Message.Invalid(PrintStatements.somethingWentWrong);
+
+            }
+        }
+
+
+
+
 
         void ViewAppointAsDates(Dentist dentist)
         {
-            Console.WriteLine("Enter Date Whose Appointments You Want To See(eg:2023-10-30): ");
-            string dT=Console.ReadLine()!;
+            Console.WriteLine(PrintStatements.dateOfAppointment);
+            string dT = Console.ReadLine()!;
             DateTime dateTime;
             var isValidDate = DateTime.TryParse(dT, out dateTime);
 
             if (isValidDate)
             {
                 List<Appointment> listOfAppointmentByDates = new List<Appointment>();
-                listOfAppointmentByDates =dentistController.GetAppointmentByDates(dentist,dateTime);
-                if (listOfAppointmentByDates.Count <=0)
-                    Console.WriteLine("You Do Not Have Any Appointment On The Entered Dates");
+                listOfAppointmentByDates = appointmentController.GetAppointmentByDates(dentist.userName, dateTime);
+                if (listOfAppointmentByDates.Count <= 0)
+                    Console.WriteLine(PrintStatements.noAppointmentFound);
 
                 else
                 {
                     foreach (Appointment appointment in listOfAppointmentByDates)
                     {
 
-                        Console.WriteLine("-----------------------------------------------------------------");
-                        Console.WriteLine("| Appointment Id:  -> " + appointment.appointmentId);
-                        Console.WriteLine("| PatientUserName: -> " + appointment.patientsUserName);
-                        Console.WriteLine("| ClinicName:      -> " + appointment.clinicName);
-                        Console.WriteLine("| Prescription:    -> " + appointment.prescription);
-                        Console.WriteLine("| Appointment Date:-> " + appointment.appointmentDate.ToString("yy/MM/dd"));
+                        Console.WriteLine(PrintStatements.dashedLine);
+                        Console.WriteLine(PrintStatements.appointId + appointment.appointmentId);
+                        Console.WriteLine(PrintStatements.patientUserName + appointment.patientsUserName);
+                        Console.WriteLine(PrintStatements.clinicName + appointment.clinicName);
+                        Console.WriteLine(PrintStatements.prescription + appointment.prescription);
+                        Console.WriteLine(PrintStatements.appointmentDate + appointment.appointmentDate.ToString("yy/MM/dd"));
 
                     }
                 }
             }
             else
             {
-                Console.WriteLine("Please Try Again And Enter a Valid Date: ");
+                Console.WriteLine(PrintStatements.enterValidDate);
             }
-       
+
         }
 
-         void SelectAppointmentById(Dentist dentist)
+        void SelectAppointmentById(Dentist dentist)
         {
 
-            Console.WriteLine("Enter Appointment Id Of Patient");
+            Console.WriteLine(PrintStatements.enterAppoitmentID);
             int appointId;
-                if(!int.TryParse(Console.ReadLine(),out appointId))
+            if (!int.TryParse(Console.ReadLine(), out appointId))
             {
-                Message.Invalid("Enter Id Correctly");
+                Message.Invalid(PrintStatements.giveCorrectInput);
                 return;
 
             }
 
-            Appointment appointment = dentistController.GetAppointmentById(dentist,appointId);
+            Appointment appointment = appointmentController.GetAppointmentById(dentist.userName, appointId);
 
 
             if (appointment == null)
-            { Console.WriteLine("Sorry You Do Not Have Any appointment With Following Id");
+            {
+                Console.WriteLine(PrintStatements.noAppointmentFound);
 
                 return;
             }
-           
 
 
-                Console.WriteLine("-----------------------------------------------------------");
-                Console.WriteLine("| Appointment Id:  -> " + appointment.appointmentId+"     ");
-                Console.WriteLine("| PatientUserName: ->" + appointment.patientsUserName + " ");
-                Console.WriteLine("| ClinicName:      ->" + appointment.clinicName + "       ");
-                Console.WriteLine("| Prescription:    ->" + appointment.prescription + "     ");
-                Console.WriteLine("| Appointment Date:->" + appointment.appointmentDate + "  ");
-                Console.WriteLine("-----------------------------------------------------------");
 
-prescriptionselector: Console.WriteLine("Do You Want To Add Prescription:Then Press 1 OtherWise Any Other Key To Go At Dashboard");
-                var pressKey = Console.ReadLine();
-                if (pressKey == "1")
+            Console.WriteLine(PrintStatements.dashedLine);
+            Console.WriteLine(PrintStatements.appointId + appointment.appointmentId);
+            Console.WriteLine(PrintStatements.patientUserName + appointment.patientsUserName);
+            Console.WriteLine(PrintStatements.clinicName + appointment.clinicName);
+            Console.WriteLine(PrintStatements.prescription + appointment.prescription);
+            Console.WriteLine(PrintStatements.appointmentDate + appointment.appointmentDate);
+            Console.WriteLine(PrintStatements.dashedLine);
+
+        prescriptionselector: Console.WriteLine(PrintStatements.wantToAddMorePrescription);
+            var pressKey = Console.ReadLine();
+            if (pressKey == "1")
+            {
+                Console.WriteLine(PrintStatements.addIt);
+                var prescription = Console.ReadLine()!.Trim();
+                if (CheckValidity.NullCheck(prescription))
                 {
-                    Console.WriteLine("Add IT:->");
-                    var prescription = Console.ReadLine()!.Trim();
-                    if(Common.NullCheck(prescription))
-                    {
-                    Console.WriteLine("Field can't be empty!!");
+                    Console.WriteLine(PrintStatements.fieldCantNull);
                     goto prescriptionselector;
-                    }
-                    appointment.prescription = prescription;
-                    dentistController.AddPrescriptionToPatient(appointment);
                 }
-                else
-                {
-                   
-                    return;
-                }
+                appointment.prescription = prescription;
+                appointmentController.AddPrescriptionToAppointment(appointment);
+            }
+            else
+            {
+
+                return;
+            }
 
         }
 
-         void SelectMaxAppointment(Dentist dentist)
-         {
-           maxAppointmentLabel: Console.WriteLine("How many Maximum number of Appointment you could hold for the day");
+        void SelectMaxAppointment(Dentist dentist)
+        {
+        maxAppointmentLabel: Console.WriteLine(PrintStatements.maximumNumberOfAppointment);
             int maxAppointment;
-            if(!int.TryParse(Console.ReadLine(), out maxAppointment)||maxAppointment<0)
+            if (!int.TryParse(Console.ReadLine(), out maxAppointment) || maxAppointment < 0)
             {
-                Console.WriteLine("Enter Number Correctly!!!");
+                Console.WriteLine(PrintStatements.giveCorrectInput);
                 goto maxAppointmentLabel;
             }
             else
             {
                 dentist.maxAppointment = maxAppointment;
-                if(dentistController.UpdateDentistAtDB(dentist))
-                    Console.WriteLine("Updation Sucessfull!!!");
+                if (dentistController.UpdateDentistAtDB(dentist))
+                    Console.WriteLine(PrintStatements.updateSucessFully);
                 else
-                    Console.WriteLine("Something went wrong!!");
+                    Console.WriteLine(PrintStatements.someThingWentWrong);
             }
 
         }
-         void LogOut(Dentist dentist)
-         {
+        void LogOut(Dentist dentist)
+        {
             dentist = null;
-            Console.WriteLine("LogOut Sucessfully!!!");
+            Console.WriteLine(PrintStatements.logOutSucessfull);
             Program.StartApp();
-         }
-
-
-
-
-
-
-
+        }
     }
 }

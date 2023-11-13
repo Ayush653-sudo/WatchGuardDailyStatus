@@ -1,24 +1,11 @@
 [
   {
+    "listOFClinicAdmin": [
+      "Ayush"
+    ],
     "clinicName": "AJHOSPITAL",
-    "description": "Clinic with experienced Dentists Located in Sector 135",
+    "description": "very nice clinic located nearby noida metro sector 142",
     "clinicCity": "noida",
-    "isverified": true,
-    "userName": "AJHOSPITAL24",
-    "password": "Ajhospital@22",
-    "emailAddress": "aj@gmail.com",
-    "phoneNumber": "9636653732",
-    "userType": 1
-  },
-  {
-    "clinicName": "Apex hospital",
-    "description": "Very nice clinic well equiped with tools",
-    "clinicCity": "noida",
-    "isverified": true,
-    "userName": "APEXHOSPITAL24",
-    "password": "Ajhospital@22",
-    "emailAddress": "apex@gmail.com",
-    "phoneNumber": "9636653732",
-    "userType": 1
+    "isverified": true
   }
 ]

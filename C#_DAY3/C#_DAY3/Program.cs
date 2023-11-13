@@ -9,6 +9,8 @@ namespace Day3
     {
         static void Main(String[] args)
         {
+            
+            List<listCheck> listCheck = new List<listCheck>();
             String demo = "hello";
             String a1="he";
             String b1= "llo";

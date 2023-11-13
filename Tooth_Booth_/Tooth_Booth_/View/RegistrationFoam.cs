@@ -1,108 +1,124 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.Net.Mail;
-using System.Text.RegularExpressions;
+﻿
 using Tooth_Booth_.common;
-using Tooth_Booth_.database;
+using Tooth_Booth_.common.Enums;
+
 using Tooth_Booth_.models;
-using Tooth_Booth_.View;
+
 
 namespace ThoothTooth_Booth_.View
 {
 	public class RegistrationFoam
 	{
-		internal static User GetUserCommonDetails(int typeOfUser)
+		public static String MaskPassword()
 		{
-
-			
-			usernameretry: Console.WriteLine("Please Enter userName: ");
-				var userName = Console.ReadLine()!.Trim();
-
-				if (Common.NullCheck(userName)|| Common.CheckLength(userName,5)||!Common.hasOnlyAlphaNumeric.IsMatch(userName))
-				{
-					
-					Console.WriteLine("Your UserName Must Be Greate Than 5 and only alphanumeric is acceptable");
-					goto usernameretry;
-				}
-				
-                passwordretry: Console.WriteLine("Enter Your Password: ");
-				var password = Console.ReadLine()!.Trim();
-
-
-
-				var isValidated = Common.hNumber.IsMatch(password) && Common.hasUpperChar.IsMatch(password) && Common.hasMinimum5Chars.IsMatch(password) && Common.hasSymbols.IsMatch(password);
-
-				if (!isValidated)
-				{
-					Console.WriteLine("Your Password Must Be Greate Than 5 Kindly Retry and must contain one upper case letter , special symbol and number");
-					goto passwordretry;
-				}
-
-
-
-			emailretry: Console.WriteLine("Enter your EmailAddress: ");
-				var emailAddress = Console.ReadLine()!.Trim();
-
-				if (!Common.CheckEmail(emailAddress))
-				{
-					Console.WriteLine("Please Enter A valid Email");
-					goto emailretry;
-				}
-
-			phoneretry: Console.WriteLine("Enter your PhoneNumber: ");
-				var phoneNumber = Console.ReadLine()!.Trim();
-
-				isValidated = Common.hasnumber.IsMatch(phoneNumber);
-				if (!isValidated)
-				{
-					Console.WriteLine("Enter valid phone number");
-					goto phoneretry;
-				}
-				UserType userType = (UserType)typeOfUser;
-
-
-				User user = new User(userName, password, emailAddress, phoneNumber, userType);
-				return user;
-
-			
-			
-			
+            var password = string.Empty;
+            ConsoleKey key; do
+            {
+                var keyInfo = Console.ReadKey(intercept: true);
+                key = keyInfo.Key;
+                if (key == ConsoleKey.Backspace && password.Length > 0)
+                {
+                    Console.Write("\b \b");
+                    password = password[0..^1];
+                }
+                else if (!char.IsControl(keyInfo.KeyChar))
+                {
+                    Console.Write("*");
+                    password += keyInfo.KeyChar;
+                }
+            } while (key != ConsoleKey.Enter);
+			return password;
         }
-		internal static  Clinic ClinicRegistrationDetails()
+
+
+       public static User GetUserDetails(int typeOfUser)
+        {
+
+
+        usernameretry:
+            Console.WriteLine(PrintStatements.userNamePrint);
+            var userName = Console.ReadLine()!.Trim();
+
+            if (CheckValidity.NullCheck(userName) || CheckValidity.CheckLength(userName, 5) || !CheckValidity.CheckRegex(userName, CheckValidity.hasOnlyAlphaNumeric))
+            {
+
+                Console.WriteLine(PrintStatements.erroruserNamePrint);
+                goto usernameretry;
+            }
+
+        passwordretry: Console.WriteLine(PrintStatements.passwordPrint);
+            var password = MaskPassword();
+
+
+
+            var isValidated = CheckValidity.CheckRegex(password, CheckValidity.hNumber) && CheckValidity.CheckRegex(password, CheckValidity.hasUpperChar) && CheckValidity.CheckRegex(password, CheckValidity.hasMinimum5Chars) && CheckValidity.CheckRegex(password, CheckValidity.hasSymbols);
+
+            if (!isValidated)
+            {
+                Console.WriteLine(PrintStatements.errrorPasswordPrint);
+                goto passwordretry;
+            }
+
+        emailretry: Console.WriteLine(PrintStatements.emailAddressPrint);
+            var emailAddress = Console.ReadLine()!.Trim();
+
+            if (!CheckValidity.CheckRegex(emailAddress, CheckValidity.emailRegex))
+            {
+                Console.WriteLine(PrintStatements.erorEmailPrint);
+                goto emailretry;
+            }
+
+        phoneretry: Console.WriteLine(PrintStatements.phoneNumberPrint);
+            var phoneNumber = Console.ReadLine()!.Trim();
+
+            isValidated = CheckValidity.CheckRegex(phoneNumber, CheckValidity.hasnumber);
+            if (!isValidated)
+            {
+                Console.WriteLine(PrintStatements.errorPhoneNumberPrint);
+                goto phoneretry;
+            }
+            UserType userType = (UserType)typeOfUser;
+
+            User user = new User(userName, password, emailAddress, phoneNumber, userType);
+            return user;
+
+        }
+
+        internal static  Clinic ClinicRegistrationDetails(string userName)
 		{
 			
 
-				User user = GetUserCommonDetails(1);
+				
 
-			clinicretry: Console.WriteLine("Enter your clinicName: ");
+			clinicretry: Console.WriteLine(PrintStatements.clinicNamePrint);
 				var clinicName = Console.ReadLine()!.Trim();
 
-				if (String.IsNullOrEmpty(clinicName)||clinicName.Length<5)
+				if (CheckValidity.CheckLength(clinicName,6)||CheckValidity.NullCheck(clinicName))
 				{
 
-					Console.WriteLine("Clinic Name Must Be Greate Than 5");
+					Console.WriteLine(PrintStatements.errorClinicPrint);
 					goto clinicretry;
 				}
 
-			clinicdescriptionretry: Console.WriteLine("Enter small Description of your clinic: ");
+			clinicdescriptionretry: Console.WriteLine(PrintStatements.clinicDescriptionPrint);
 				var description = Console.ReadLine()!.Trim();
-				if (Common.CountWords(description)<5)
+				if (!CheckValidity.CountWords(description,6))
 				{
-					Console.WriteLine("Description must contain Word more than 6 for description");
+					Console.WriteLine(PrintStatements.errorDescriptionPrint);
 					goto clinicdescriptionretry;
 				}
-			clinicCityretry: Console.WriteLine("Enter your clinic city: ");
+			clinicCityretry: Console.WriteLine(PrintStatements.clinicCity);
 				var clinicCity = Console.ReadLine()!.ToLower().Trim();
-				if (Common.NullCheck(clinicCity) || !Regex.IsMatch(clinicCity, @"^[a-zA-Z]+$")||Common.CheckLength(clinicCity,3))
+				if (CheckValidity.NullCheck(clinicCity) || !CheckValidity.CheckRegex(clinicCity,CheckValidity.hasOnlyAlphabet)||CheckValidity.CheckLength(clinicCity,3))
 				{
-					Console.WriteLine("Clinic City must not empty");
+					Console.WriteLine(PrintStatements.errorClinicCityPrint);
 
 					goto clinicCityretry;
 				}
 
 			
 
-				Clinic newClinic = new(user, clinicName, description, clinicCity);
+				Clinic newClinic = new(userName, clinicName, description, clinicCity);
 
 				return newClinic;
 
@@ -111,15 +127,10 @@ namespace ThoothTooth_Booth_.View
 
 		}
 
-		internal static Patient PatientsRegistrationDetails()
-		{
-
-			
-				User user = GetUserCommonDetails(3);
-
-				Patient newPatient = new Patient(user);
-
-				return newPatient;
+		internal static User PatientsRegistrationDetails()
+		{		
+				User user = GetUserDetails(3);
+				return user;
 		
 			
         }
