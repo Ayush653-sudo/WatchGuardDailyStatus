@@ -13,17 +13,30 @@ namespace Tooth_Booth_.Config
             return new AuthController(new AuthDashboard());
         }
         
-        public static IClinicController GetClinicController()
+        public static IClinicControllerForSuperAdmin GetClinicControllerForSuperAdmin()
+        {
+            return new ClinicController();
+        }
+        public static IClinicControllerForPatient GetClinicControllerForPatient()
         {
             return new ClinicController();
         }
 
-        public static IDentistController GetDentistController()
+        public static IDentistControllerForClinicAdmin GetDentistControllerForClinicAdmin()
         {
             return new DentistController();
         }
 
-      
+        public static IDentistControllerForDentist GetDentistControllerForDentist()
+        {
+            return new DentistController();
+        }
+
+        public static IDentistControllerForPatient GetDentistControllerForPatient()
+        {
+            return new DentistController();
+        }
+
 
         public static ISuperAdminController GetSuperAdminController()
         {

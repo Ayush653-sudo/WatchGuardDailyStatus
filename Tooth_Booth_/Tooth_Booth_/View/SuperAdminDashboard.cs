@@ -10,10 +10,10 @@ namespace Tooth_Booth_.View
 {
     public class SuperAdminView:ISuperAdminView
 
-    { 
-      public ISuperAdminController superAdminController { get; set; }
-      public IClinicController clinicController { get; set; }
-      public SuperAdminView(ISuperAdminController superAdminController, IClinicController clinicController)
+    {
+         ISuperAdminController superAdminController;
+         IClinicControllerForSuperAdmin clinicController;
+      public SuperAdminView(ISuperAdminController superAdminController, IClinicControllerForSuperAdmin clinicController)
         {
             this.superAdminController = superAdminController;
             this.clinicController = clinicController;
@@ -69,8 +69,7 @@ namespace Tooth_Booth_.View
 
         }
 
-
-       public void ViewListOfAvailableClinic(User user)
+        void ViewListOfAvailableClinic(User user)
         {
            List<Clinic>clinics= clinicController.GeListOfAllClinic();
 
@@ -95,21 +94,15 @@ namespace Tooth_Booth_.View
 
         }
 
-        public void EditClinicDashboard(User superadmin)
+        void EditClinicDashboard(User superadmin)
         {
-
-            clinicusername:Console.WriteLine(PrintStatements.userNameClinicEntry);
-            var userName = Console.ReadLine()!.Trim();
-            if(String.IsNullOrEmpty(userName))
-            {
-                Console.WriteLine(PrintStatements.fieldCantNull);
-                goto clinicusername;
-            }
+            var userName = InputTaker.UserNameInput(PrintStatements.userNameClinicEntry);
                Clinic obj=clinicController.GetClinicByClinicName(userName);
             if(obj==null)
             {
                 Console.WriteLine(PrintStatements.enterUserNameCorrectly);
-                goto clinicusername;
+                EditClinicDashboard(superadmin);
+                return;
             }
 
             Console.WriteLine("" 
@@ -133,27 +126,12 @@ namespace Tooth_Booth_.View
             switch (pressedKey)
             {
                 case EditClinic.Email:
-                 clinicNameentry:   Console.WriteLine(PrintStatements.clinicNamePrint);
-                    var newClinicName = Console.ReadLine()!.Trim();
-                    
-                    if (!CheckValidity.NullCheck(newClinicName))
-                    {
-                        Console.WriteLine(PrintStatements.erorEmailPrint);
-                        goto clinicNameentry;
-                    }
+                    var newClinicName = InputTaker.ClinicNameInput(PrintStatements.clinicNamePrint);
                     obj.clinicName = newClinicName;
                     break;
 
-                
-
                 case EditClinic.Description:
-                  clinicdescriptionretry:  Console.WriteLine(PrintStatements.clinicDescriptionPrint);
-                    var description = Console.ReadLine()!.Trim();
-                    if (!CheckValidity.CountWords(description, 6))
-                    {
-                        Console.WriteLine(PrintStatements.errorDescriptionPrint);
-                        goto clinicdescriptionretry;
-                    }
+                    var description = InputTaker.ClinicDescriptionInput(PrintStatements.clinicDescriptionPrint);
                     obj.description = description;
                     break;
 
@@ -188,21 +166,15 @@ namespace Tooth_Booth_.View
         }
 
 
-        public void DeleteAnyClinic(User superadmin)
+         void DeleteAnyClinic(User superadmin)
         {
-
-            usernameentry: Console.WriteLine(PrintStatements.wantToChangeClinic);
-            var userName = Console.ReadLine()!.Trim();
-            if(CheckValidity.NullCheck(userName))
-            {
-                Console.WriteLine(PrintStatements.fieldCantNull);
-                goto usernameentry;
-            }
+            var userName =InputTaker.UserNameInput(PrintStatements.wantToChangeClinic);
             Clinic obj = clinicController.GetClinicByClinicName(userName);
             if (obj == null)
             {
                 Console.WriteLine(PrintStatements.erroruserNamePrint);
-                goto usernameentry;
+                DeleteAnyClinic(superadmin); 
+                return;
                
             }
             else
@@ -216,7 +188,7 @@ namespace Tooth_Booth_.View
 
         }
 
-       public void AddMoreAdmin(User superadmin)
+        void AddMoreAdmin(User superadmin)
         {
             User user = RegistrationFoam.GetUserDetails(0);
 
@@ -229,7 +201,7 @@ namespace Tooth_Booth_.View
 
         }
 
-       public void LogOut(User superadmin)
+        void LogOut(User superadmin)
         {
             superadmin = null;
             Program.StartApp();

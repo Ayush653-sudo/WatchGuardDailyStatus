@@ -8,7 +8,12 @@ using Tooth_Booth_.View;
 
 class Program
 {
-   public static void StartApp()
+    private IAuthController authController ;
+    public Program(IAuthController authController)
+    {
+        this.authController = authController;
+    }
+    public  void StartApp()
     {
 
         while (true)
@@ -20,7 +25,7 @@ class Program
             {
                 var pressKey = (SelectAuth)Convert.ToInt32(Console.ReadLine());
 
-                IAuthController authController = ControllerConfig.GetAuthController();
+               
                 switch (pressKey)
                 {
                     case SelectAuth.LogIn:
@@ -39,7 +44,7 @@ class Program
             }
             catch(Exception ex) {
 
-                ExceptionDBHandler.handler.AddEntryAtDB<String>(ExceptionDBHandler.handler.ExceptionPath, ex.ToString(), ExceptionDBHandler.handler.ListOfException);
+                ExceptionDBHandler.handler.AddEntryToFile(ex.ToString());
                 Message.Invalid(PrintStatements.giveCorrectInput);
 
             }
@@ -50,8 +55,9 @@ class Program
       }
     public static void Main()
     {
-     
-        StartApp();
+
+        Program startProgram = new Program(ControllerConfig.GetAuthController());
+        startProgram.StartApp();
 
     }
 

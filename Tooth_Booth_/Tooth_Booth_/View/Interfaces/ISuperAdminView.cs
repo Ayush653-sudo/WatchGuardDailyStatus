@@ -10,19 +10,7 @@ namespace Tooth_Booth_.View.Interfaces
 {
     interface ISuperAdminView
     {
-        ISuperAdminController superAdminController { get; set; }
-        IClinicController clinicController {  get; set; } 
         internal void StartSuperAdminView(User user);
-        void ViewListOfAvailableClinic(User user);
-
-        internal void EditClinicDashboard(User superadmin);
-
-        void DeleteAnyClinic(User superadmin);
-
-        void AddMoreAdmin(User superadmin);
-
-        void LogOut(User superadmin);
-
 
     }
 }

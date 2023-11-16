@@ -1,5 +1,6 @@
 ﻿
 using Tooth_Booth_.Controller.ControllerInterfaces;
+using Tooth_Booth_.Controller.Interfaces;
 using Tooth_Booth_.DatabaseHandler;
 using Tooth_Booth_.models;
 using Tooth_Booth_.View;
@@ -9,7 +10,7 @@ namespace Tooth_Booth_.Controller
 
 
 
-    class ClinicController : IClinicController
+    class ClinicController : IClinicControllerForSuperAdmin, IClinicControllerForPatient
     {
 
 
@@ -37,7 +38,7 @@ namespace Tooth_Booth_.Controller
 
             int index = ClinicDBHandler.handler.listOfClinic.FindIndex((obj) => obj.clinicName == updatedClinic.clinicName);
 
-           ClinicDBHandler.handler.listOfClinic[index] = updatedClinic;
+            ClinicDBHandler.handler.listOfClinic[index] = updatedClinic;
 
             if (ClinicDBHandler.handler.UpdateEntryAtDB<Clinic>(ClinicDBHandler.handler.clinicPath, ClinicDBHandler.handler.listOfClinic))
                 return true;
@@ -58,12 +59,12 @@ namespace Tooth_Booth_.Controller
             UserDBHandler.handler.listOfUser.Remove(UserDBHandler.handler.listOfUser[index]);
             ClinicDBHandler.handler.listOfClinic.Remove(clinic);
             DentistDBHandler.handler.listOfDentist.RemoveAll(dentist => dentist.clinicName == clinic.clinicName);
-            
+
             if (!ClinicDBHandler.handler.UpdateEntryAtDB<Clinic>(ClinicDBHandler.handler.clinicPath, ClinicDBHandler.handler.listOfClinic))
                 return false;
             if (!DentistDBHandler.handler.UpdateEntryAtDB<Dentist>(DentistDBHandler.handler.dentistPath, DentistDBHandler.handler.listOfDentist))
                 return false;
-            if(!UserDBHandler.handler.UpdateEntryAtDB<User>(UserDBHandler.handler.userPath,UserDBHandler.handler.listOfUser))
+            if (!UserDBHandler.handler.UpdateEntryAtDB<User>(UserDBHandler.handler.userPath, UserDBHandler.handler.listOfUser))
                 return false;
             return true;
 

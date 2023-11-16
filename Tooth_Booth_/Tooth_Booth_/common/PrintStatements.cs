@@ -41,9 +41,7 @@ namespace Tooth_Booth_.common
         public static string clinicCityArrow="City:             -> ";
         public static string verifiedArrow="IsVerifired:      -> ";
         public static string changableFields = "You Could Only Change Following Fields:";
-
         public static string emailPrint="\n 1)Email: ";
-
         public static string phoneNumberShow="\n 2)PhoneNumber : ";
         public static string description="\n 3)Description: " ;
         public static string verificationStatusShow="\n 4)Verification Status: ";
@@ -62,7 +60,7 @@ namespace Tooth_Booth_.common
         public static string followingDentist="Following Dentist Are Available In These Clinic ";
         public static string dentistName="Dentist Name:  -->";
         public static string dentistspecialization = " Specialist In:  -->";
-        public static string appointmentDentistName="Write Name of That Dentist With Whome You Want To Book Your Appointment";
+        public static string dentistNameForAppointment = "Write Name of That Dentist With Whome You Want To Book Your Appointment";
         public static string choosePaymentMethod = "Choose Your Payment Method";
         public static string forUpi="Press 1 If You Will Pay From UPI";
         public static string forCash = "Press 2 If You Want To Pay In Cash";

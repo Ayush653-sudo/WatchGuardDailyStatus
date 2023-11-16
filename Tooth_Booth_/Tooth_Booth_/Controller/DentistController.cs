@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Tooth_Booth_.Controller.ControllerInterfaces;
+using Tooth_Booth_.Controller.Interfaces;
 using Tooth_Booth_.database;
 using Tooth_Booth_.DatabaseHandler;
 using Tooth_Booth_.models;
@@ -12,7 +13,7 @@ using Tooth_Booth_.View;
 namespace Tooth_Booth_.Controller
 {
 
-    class DentistController : IDentistController
+    class DentistController : IDentistControllerForClinicAdmin, IDentistControllerForDentist, IDentistControllerForPatient
     {
 
         public bool UpdateDentistAtDB(Dentist dentist)
@@ -54,7 +55,7 @@ namespace Tooth_Booth_.Controller
 
         }
 
-        public bool RegisterNewDentistAtClinic(User user,Dentist dentist)
+        public bool RegisterNewDentistAtClinic(User user, Dentist dentist)
         {
 
             if (AuthController.isPresentEarlier(dentist.userName))
@@ -64,16 +65,17 @@ namespace Tooth_Booth_.Controller
             if (UserDBHandler.handler.AddEntryAtDB<User>(UserDBHandler.handler.userPath, user, UserDBHandler.handler.listOfUser))
             {
 
-                if( DentistDBHandler.handler.AddEntryAtDB<Dentist>(DentistDBHandler.handler.dentistPath, dentist, DentistDBHandler.handler.listOfDentist))
+                if (DentistDBHandler.handler.AddEntryAtDB<Dentist>(DentistDBHandler.handler.dentistPath, dentist, DentistDBHandler.handler.listOfDentist))
                     return true;
                 else
                 {
                     UserDBHandler.handler.listOfUser.Remove(user);
+                    UserDBHandler.handler.UpdateEntryAtDB<User>(UserDBHandler.handler.userPath, UserDBHandler.handler.listOfUser);
                     return false;
                 }
             }
             return false;
-          
+
 
         }
 
@@ -81,15 +83,15 @@ namespace Tooth_Booth_.Controller
         {
 
             int index = DentistDBHandler.handler.listOfDentist.FindIndex((obj) => userName == obj.userName && clinicUserName == obj.clinicName);
-            int userIndex=UserDBHandler.handler.listOfUser.FindIndex((obj)=>obj.userName == userName);
+            int userIndex = UserDBHandler.handler.listOfUser.FindIndex((obj) => obj.userName == userName);
             if (index == -1)
             {
                 Message.Invalid("No dentist found");
                 return false;
             }
 
-            int k = AppointmentDBHandler.handler.listOfAppointment.FindIndex((obj) => obj.doctorUserName == userName && obj.appointmentDate == DateTime.Today);
-            if (k != -1)
+            int appointmentIndexForDentist = AppointmentDBHandler.handler.listOfAppointment.FindIndex((obj) => obj.doctorUserName == userName && obj.appointmentDate == DateTime.Today);
+            if (appointmentIndexForDentist != -1)
             {
 
                 Message.Invalid("You cant delete him he has appointment with patients: ");
@@ -101,8 +103,8 @@ namespace Tooth_Booth_.Controller
 
             if (DentistDBHandler.handler.UpdateEntryAtDB<Dentist>(DentistDBHandler.handler.dentistPath, DentistDBHandler.handler.listOfDentist))
             {
-                if(UserDBHandler.handler.UpdateEntryAtDB<User>(UserDBHandler.handler.userPath, UserDBHandler.handler.listOfUser))
-                return true;
+                if (UserDBHandler.handler.UpdateEntryAtDB<User>(UserDBHandler.handler.userPath, UserDBHandler.handler.listOfUser))
+                    return true;
                 else
                 {
                     return false;

@@ -17,7 +17,6 @@ namespace Tooth_Booth_.Controller
 
     public class AuthController : IAuthController
     {
-
         IAuthDashboard authDashboard;
         public AuthController(IAuthDashboard authDashboard)
         {
@@ -108,7 +107,7 @@ namespace Tooth_Booth_.Controller
                         }
 
                     }
-                    else if (obj.userType == UserType.clinicAdmin)
+                    else if (obj.userType == UserType.Patient)
                     {
                         Message.Status("You have successfully registered as a patient");
                     }

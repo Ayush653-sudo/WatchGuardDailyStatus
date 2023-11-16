@@ -1,35 +1,36 @@
 ﻿
+using System.Collections.Generic;
+using System.IO;
+using Tooth_Booth_.common;
 using Tooth_Booth_.database;
 using Tooth_Booth_.models;
 using Tooth_Booth_.View;
 
 namespace Tooth_Booth_.DatabaseHandler
 {
-    class ExceptionDBHandler:DBHandler
+    class ExceptionDBHandler
     {
 
-        public List<String> ListOfException { get; set; }
+        public List<String> listOfException;
 
-        public string ExceptionPath { set; get; } = @"C:\Users\atomar\source\repos\ConsoleApp1\Tooth_Booth_\Tooth_Booth_\Data\Exception.json";
+        public string exceptionPath = @"C:\Users\atomar\source\repos\ConsoleApp1\Tooth_Booth_\Tooth_Booth_\Data\Exception.json";
         static ExceptionDBHandler _handler = null;
 
         private ExceptionDBHandler()
         {
 
-
-
-            ListOfException = new List<String>();
+            listOfException = new List<String>();
             try
             {
-                string exceptionFileContent = File.ReadAllText(ExceptionPath);
-
-                ListOfException = Newtonsoft.Json.JsonConvert.DeserializeObject<List<String>>(exceptionFileContent)!;
+                string exceptionFileContent = File.ReadAllText(exceptionPath);
+                if(!string.IsNullOrEmpty(exceptionFileContent) ) 
+                listOfException = Newtonsoft.Json.JsonConvert.DeserializeObject<List<String>>(exceptionFileContent)!;
 
             }
             catch 
             {
                
-                Message.Invalid("SomeThing Went Wrong With Files");
+                Message.Invalid(PrintStatements.someThingWentWrong);
 
             }
 
@@ -45,6 +46,22 @@ namespace Tooth_Booth_.DatabaseHandler
                 return _handler;
             }
         }
+        public bool AddEntryToFile(string exceptionContent)
+        {
+            listOfException.Add(exceptionContent);
+            try
+            {
+                var jsonFormattedContent = Newtonsoft.Json.JsonConvert.SerializeObject(listOfException);
+                File.WriteAllText(exceptionPath, jsonFormattedContent);
+            }
+            catch
+            {
+                return false;
+            }
+            return true;
+
+        }
+
 
     }
 }

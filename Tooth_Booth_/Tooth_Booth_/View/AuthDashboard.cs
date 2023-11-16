@@ -3,7 +3,7 @@ using Tooth_Booth_.common;
 using Tooth_Booth_.common.Enums;
 using Tooth_Booth_.DatabaseHandler;
 using Tooth_Booth_.models;
-
+using Tooth_Booth_.View;
 using Tooth_Booth_.View.Interfaces;
 
 namespace ThoothTooth_Booth_.View
@@ -27,7 +27,7 @@ namespace ThoothTooth_Booth_.View
             }
         passLabel: Console.WriteLine(PrintStatements.passwordPrint);
 
-            var password = RegistrationFoam.MaskPassword().Trim();
+            var password = InputTaker.MaskPassword().Trim();
             if (CheckValidity.NullCheck(password))
             {
                 Console.WriteLine(PrintStatements.errrorPasswordPrint);
@@ -67,7 +67,7 @@ namespace ThoothTooth_Booth_.View
                         Program.StartApp();
                         return null;
                     default:
-                        Console.WriteLine("Please Enter A Valid Input");
+                        Console.WriteLine(PrintStatements.choiceCorrectlyPrint);
                         RegistrationView();
                         break;
 
@@ -76,8 +76,8 @@ namespace ThoothTooth_Booth_.View
             }
             catch (Exception ex) 
             {
-                ExceptionDBHandler.handler.AddEntryAtDB<String>(ExceptionDBHandler.handler.ExceptionPath, ex.ToString(), ExceptionDBHandler.handler.ListOfException);
-                Console.WriteLine("SomeThing Went Wrong ");
+                ExceptionDBHandler.handler.AddEntryToFile(ex.ToString());
+                Console.WriteLine(PrintStatements.someThingWentWrong);
             }
             return null;
 

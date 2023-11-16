@@ -1,5 +1,6 @@
 ﻿
 using Tooth_Booth_.common.Enums;
+using Tooth_Booth_.DatabaseHandler;
 
 namespace Tooth_Booth_.models
 {
@@ -20,7 +21,11 @@ namespace Tooth_Booth_.models
         public Appointment(string patientsUserName,string doctorName,string clinicName,string prescription,PaymentType paymentType)
         {
 
-            this.appointmentId = new Random().Next(4444);
+            int id = new Random().Next(4444);
+            while (AppointmentDBHandler.handler.listOfAppointment.FindIndex((obj) => obj.appointmentId == id) != -1)
+                id = new Random().Next(4444);
+
+            this.appointmentId = id;
             this.patientsUserName = patientsUserName;
             this.doctorUserName = doctorName;
             this.appointmentDate = DateTime.Today;

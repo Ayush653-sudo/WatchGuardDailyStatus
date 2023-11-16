@@ -16,12 +16,11 @@ namespace Tooth_Booth_.DatabaseHandler
         private AppointmentDBHandler()
         {
 
-
-
             listOfAppointment = new List<Appointment>();
             try
             {
                 string appointmentFileContent = File.ReadAllText(appointmentPath);
+                if(!string.IsNullOrEmpty(appointmentFileContent)) 
 
                 listOfAppointment = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Appointment>>(appointmentFileContent)!;
 
@@ -29,7 +28,7 @@ namespace Tooth_Booth_.DatabaseHandler
             catch(Exception ex) 
             {
 
-                ExceptionDBHandler.handler.AddEntryAtDB<String>(ExceptionDBHandler.handler.ExceptionPath, ex.ToString(), ExceptionDBHandler.handler.ListOfException);
+                ExceptionDBHandler.handler.AddEntryToFile(ex.ToString());
                 Message.Invalid("SomeThing Went Wrong With Files");
 
             }

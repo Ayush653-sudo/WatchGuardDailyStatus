@@ -11,8 +11,9 @@ namespace Tooth_Booth_.View
 {
     class ClinicAdminDashboard : IClinicAdminDashboard
     {
-       public IDentistController dentistController { get; set; }
-        public ClinicAdminDashboard( IDentistController dentistController)
+       private IDentistControllerForClinicAdmin dentistController;
+        private DentistDBHandler db = new DentistDBHandler();
+        public ClinicAdminDashboard( IDentistControllerForClinicAdmin dentistController)
         {
            
             this.dentistController = dentistController;
@@ -53,7 +54,7 @@ namespace Tooth_Booth_.View
                 }
                 catch (Exception ex) 
                 {
-                    ExceptionDBHandler.handler.AddEntryAtDB<String>(ExceptionDBHandler.handler.ExceptionPath, ex.ToString(), ExceptionDBHandler.handler.ListOfException);
+                    ExceptionDBHandler.handler.AddEntryToFile(ex.ToString());
                     Message.Invalid(PrintStatements.someThingWentWrong);
                 }
             }
@@ -79,48 +80,9 @@ namespace Tooth_Booth_.View
             Console.WriteLine(PrintStatements.dashedEnterDetailOfDentist);
 
             User user = RegistrationFoam.GetUserDetails(2);
-        dentistcategory: Console.WriteLine(PrintStatements.chooseDentistCategory);
-            Console.WriteLine(PrintStatements.dentistCategory);
-            DentistCategory pressedKey;
-            try
-            {
-                pressedKey = (DentistCategory)Convert.ToInt32(Console.ReadLine());
-            }
-            catch
-            {
-                Message.Invalid(PrintStatements.giveCorrectInput);
-                goto dentistcategory;
-            }
-            DentistCategory category = DentistCategory.GeneralDentist;
-            switch (pressedKey)
-            {
-                case DentistCategory.GeneralDentist:
-                    category = DentistCategory.GeneralDentist;
-                    break;
-                case DentistCategory.Pedodontist:
-                    category = DentistCategory.Pedodontist;
-                    break;
-                case DentistCategory.Orthodontist:
-                    category = DentistCategory.Orthodontist;
-                    break;
-                case DentistCategory.Periodontis:
-                    category = DentistCategory.Periodontis;
-                    break;
-                case DentistCategory.Endodontist:
-                    category = DentistCategory.Endodontist;
-                    break;
-                case DentistCategory.OralPathologists:
-                    category = DentistCategory.OralPathologists;
-                    break;
-                case DentistCategory.Prosthodontist:
-                    category = DentistCategory.Prosthodontist;
-                    break;
-                default:
-                    Console.WriteLine(PrintStatements.choiceCorrectlyPrint);
-                    goto dentistcategory;
-
-            }
-
+            Console.WriteLine(PrintStatements.chooseDentistCategory);
+            DentistCategory category=InputTaker.DentistCategoryInput(PrintStatements.dentistCategory);
+            
             Dentist newDentist = new Dentist(user.userName, obj.clinicName,category, 0);
             if (dentistController.RegisterNewDentistAtClinic(user,newDentist))
                 Console.WriteLine(PrintStatements.registerDentistSucessful);

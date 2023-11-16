@@ -1,4 +1,5 @@
 ﻿
+using System;
 using Tooth_Booth_.common;
 using Tooth_Booth_.common.Enums;
 using Tooth_Booth_.Controller.ControllerInterfaces;
@@ -11,12 +12,12 @@ namespace Tooth_Booth_.View
 {
     internal class PatientDashboard : IPatientDashboard
     {
-        public IAppointmentControllerForPatient appointmentController {  get; set; }
+        private IAppointmentControllerForPatient appointmentController;
 
-        public IClinicController clinicController { get; set; }  
+        private IClinicControllerForPatient clinicController;
 
-        public IDentistController dentistController { get; set; }
-        public PatientDashboard(IAppointmentControllerForPatient appointmentController,IClinicController clinicController, IDentistController dentistController)
+        private IDentistControllerForPatient dentistController;
+        public PatientDashboard(IAppointmentControllerForPatient appointmentController,IClinicControllerForPatient clinicController, IDentistControllerForPatient dentistController)
         {
             this.appointmentController = appointmentController;
             this.clinicController = clinicController;
@@ -68,45 +69,89 @@ namespace Tooth_Booth_.View
             }
         }
 
-
-        public void PatientBookAppointmentView(User patient)
+        private string SelectDentistForAppointment(Dictionary<string,string>dentistAvailableInClinic)
         {
-        clinicname: Console.WriteLine(PrintStatements.enterCityName);
-            var cityName = Console.ReadLine()!.Trim().ToLower();
-            if (CheckValidity.NullCheck(cityName))
+           
+            Console.WriteLine(PrintStatements.followingDentist);
+
+            foreach (var obj in dentistAvailableInClinic)
             {
-                Message.Invalid(PrintStatements.fieldCantNull);
-                goto clinicname;
+
+                Console.WriteLine(PrintStatements.dentistName + obj.Key + PrintStatements.dentistspecialization + obj.Value);
             }
+           
+            return InputTaker.UserNameInput(PrintStatements.dentistNameForAppointment);
 
+        }
+        private PaymentType SelectPaymentType()
+        {
+            Console.WriteLine(PrintStatements.choosePaymentMethod);
+            Console.WriteLine(PrintStatements.forUpi);
+            Console.WriteLine(PrintStatements.forCash);
+            PaymentType paymentType;
+            try
+            {
+                var SelectType = (PaymentType)Convert.ToInt32(Console.ReadLine());
+                switch (SelectType)
+                {
+                    case PaymentType.UPI: paymentType = PaymentType.UPI; break;
+                    case PaymentType.Cash: paymentType = PaymentType.Cash; break;
+                    default:
+                        Console.WriteLine(PrintStatements.choiceCorrectlyPrint);
+                        return paymentType=SelectPaymentType();
 
-            List<String> clinicNames = clinicController.GetListOFClinicByCityName(cityName);
+                }
+            }
+            catch (Exception ex)
+            {
+                ExceptionDBHandler.handler.AddEntryToFile(ex.ToString());
+                Message.Invalid(PrintStatements.giveCorrectInput);
+                return paymentType = SelectPaymentType();
+            }
+            return paymentType;
+        }
+        private int SelectClinic(List<string> clinicNames)
+        {
+            int index = -1, i = 0;
+            while (true)
+            {
+                Console.WriteLine(PrintStatements.listOfClinicPrint);
+                foreach (var name in clinicNames)
+                {
+                    i++;
+                    Console.WriteLine(i + ") " + name);
+                }
+
+                Console.WriteLine(PrintStatements.choiceEnter);
+                if (!int.TryParse(Console.ReadLine(), out index))
+                {
+                    Message.Invalid(PrintStatements.giveCorrectInput);
+
+                }
+                else
+                    break;
+            }
+            return index;
+        }
+
+       private void PatientBookAppointmentView(User patient)
+        {
+         var cityName = InputTaker.ClinicCityInput(PrintStatements.enterCityName);
+            
+          List<String> clinicNames = clinicController.GetListOFClinicByCityName(cityName);
             if (clinicNames.Count <= 0)
             {
-                //"No Clinic Found In This City"
+               
                 Message.Invalid(PrintStatements.novAilableClinicPrint);
                 return;
             }
 
-            int index = -1, i = 0;
-            Console.WriteLine(PrintStatements.listOfClinicPrint);
-            foreach (var name in clinicNames)
-            {
-                i++;
-                Console.WriteLine(i + ") " + name);
-            }
 
-        clinicInput: Console.WriteLine(PrintStatements.choiceEnter);
-            if (!int.TryParse(Console.ReadLine(), out index))
-            {
-                Message.Invalid(PrintStatements.giveCorrectInput);
-                goto clinicInput;
-            }
-
+            int index = SelectClinic(clinicNames);
             if (index <= 0 || index > clinicNames.Count)
             {
                 Console.WriteLine(PrintStatements.giveCorrectInput);
-                goto clinicInput;
+                SelectClinic(clinicNames);
 
             }
             else
@@ -119,57 +164,22 @@ namespace Tooth_Booth_.View
                     Message.Invalid(PrintStatements.noDentistAvaliable);
                     return;
                 }
-                Console.WriteLine(PrintStatements.followingDentist);
-
-                foreach (var obj in dentistAvailableInClinic)
+                string selectedDentistName = SelectDentistForAppointment(dentistAvailableInClinic);
+               
+                if (!dentistAvailableInClinic.ContainsKey(selectedDentistName))
                 {
-
-                    Console.WriteLine(PrintStatements.dentistName + obj.Key + PrintStatements.dentistspecialization + obj.Value);
+                    Console.WriteLine(PrintStatements.giveCorrectInput);
+                    SelectDentistForAppointment(dentistAvailableInClinic);               
                 }
-
-            DentistName: Console.WriteLine(PrintStatements.appointmentDentistName);
-                string selectedDentistName = Console.ReadLine()!.Trim();
-                if (CheckValidity.NullCheck(selectedDentistName))
+                else
                 {
-                    Console.WriteLine(PrintStatements.fieldCantNull);
-                    goto DentistName;
-                }
-                if (dentistAvailableInClinic.ContainsKey(selectedDentistName))
-                {
-                paymentmethod: Console.WriteLine(PrintStatements.choosePaymentMethod);
-                    Console.WriteLine(PrintStatements.forUpi);
-                    Console.WriteLine(PrintStatements.forCash);
-                    PaymentType paymentType;
-                    try
-                    {
-                        var SelectType = (PaymentType)Convert.ToInt32(Console.ReadLine());
-                        switch (SelectType)
-                        {
-                            case PaymentType.UPI: paymentType = PaymentType.UPI; break;
-                            case PaymentType.Cash: paymentType = PaymentType.Cash; break;
-                            default:
-                                Console.WriteLine(PrintStatements.choiceCorrectlyPrint);
-                                goto paymentmethod;
-
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        ExceptionDBHandler.handler.AddEntryAtDB<String>(ExceptionDBHandler.handler.ExceptionPath, ex.ToString(), ExceptionDBHandler.handler.ListOfException);
-                        Message.Invalid(PrintStatements.giveCorrectInput);
-                        goto paymentmethod;
-                    }
-
+                    PaymentType paymentType = SelectPaymentType();
                     Appointment patientNewAppointment = new(patient.userName, selectedDentistName, nameOfClinic, "", paymentType);
 
 
                     if (appointmentController.BookNewAppointment(patientNewAppointment))
                         Console.WriteLine(PrintStatements.appointmentAdded);
-                }
-                else
-                {
-                    Console.WriteLine(PrintStatements.giveCorrectInput);
-                    goto DentistName;
+
                 }
 
 
@@ -178,7 +188,7 @@ namespace Tooth_Booth_.View
 
         }
 
-        public void ViewAllAppointment(User patient)
+        private void ViewAllAppointment(User patient)
         {
             List<Appointment> appointments = appointmentController.GetAllAppointmentByUsername(patient.userName);
 
@@ -203,15 +213,9 @@ namespace Tooth_Booth_.View
 
         }
 
-        public void CancelAppointmentByIdView(User patient)
+        private void CancelAppointmentByIdView(User patient)
         {
-        identer: Console.WriteLine(PrintStatements.cancleAppointmentId);
-            int appointmentId;
-            if (!int.TryParse(Console.ReadLine(), out appointmentId))
-            {
-                Message.Invalid(PrintStatements.giveCorrectInput);
-                goto identer;
-            }
+            int appointmentId=InputTaker.AppointmentIdInput(PrintStatements.cancleAppointmentId);            
             bool flag = appointmentController.cancleAppointById(patient.userName, appointmentId);
             if (flag)
                 Console.WriteLine(PrintStatements.appointmentEntryDeleted);
@@ -220,7 +224,7 @@ namespace Tooth_Booth_.View
 
         }
 
-        public void LogOut(User patient)
+        private void LogOut(User patient)
         {
             patient = null;
             Program.StartApp();

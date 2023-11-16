@@ -8,22 +8,23 @@ namespace Tooth_Booth_.Config
 
         public static IClinicAdminDashboard GetClinicAdminDashboard()
         {
-            return new ClinicAdminDashboard(ControllerConfig.GetDentistController());
+            return new ClinicAdminDashboard(ControllerConfig.GetDentistControllerForClinicAdmin());
         }
+
 
         public static IDentistDashboard GetDentistDashboard()
         {
-            return new DentistDashboard(ControllerConfig.GetDentistController(),ControllerConfig.GetAppointmentControllerForDentist());
+            return new DentistDashboard(ControllerConfig.GetDentistControllerForDentist(),ControllerConfig.GetAppointmentControllerForDentist());
         }
 
         public static IPatientDashboard GetPatientDashboard()
         {
-            return new PatientDashboard(ControllerConfig.GetAppointmentController(),ControllerConfig.GetClinicController(),ControllerConfig.GetDentistController());
+            return new PatientDashboard(ControllerConfig.GetAppointmentController(),ControllerConfig.GetClinicControllerForPatient(),ControllerConfig.GetDentistControllerForPatient());
         }
 
         public static ISuperAdminView GetSuperAdminView()
         {
-            return new SuperAdminView(ControllerConfig.GetSuperAdminController(),ControllerConfig.GetClinicController());
+            return new SuperAdminView(ControllerConfig.GetSuperAdminController(),ControllerConfig.GetClinicControllerForSuperAdmin());
         }
 
     }

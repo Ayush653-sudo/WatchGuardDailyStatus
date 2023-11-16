@@ -54,5 +54,12 @@
     "emailAddress": "admin@gmail.com",
     "phoneNumber": "9636653732",
     "userType": 0
+  },
+  {
+    "userName": "tomi22",
+    "password": "Tomi@22",
+    "emailAddress": "tomar@gmail.com",
+    "phoneNumber": "9636653732",
+    "userType": 2
   }
 ]
