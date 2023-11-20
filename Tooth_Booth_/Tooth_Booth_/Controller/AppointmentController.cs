@@ -1,4 +1,5 @@
 ﻿using Tooth_Booth_.Controller.Interfaces;
+using Tooth_Booth_.database;
 using Tooth_Booth_.DatabaseHandler;
 using Tooth_Booth_.models;
 using Tooth_Booth_.View;
@@ -8,25 +9,37 @@ namespace Tooth_Booth_.Controller
     public class AppointmentController : IAppointmentControllerForPatient, IAppointmentControllerForDentist
     {
 
-        public List<Appointment> GetAppointmentByDates(string userName, DateTime dateTime)
+        IDBHandler<Dentist> dentistDBHandler;
+        IDBHandler<Appointment> appointmentDBHandler;
+        public AppointmentController(IDBHandler<Dentist> dentistDBHandler, IDBHandler<Appointment> appointmetnDBHandler)
         {
+            this.dentistDBHandler = dentistDBHandler;
+            this.appointmentDBHandler = appointmetnDBHandler;
 
-            return AppointmentDBHandler.handler.listOfAppointment.FindAll((obj) => obj.appointmentDate == dateTime && userName == obj.doctorUserName);
         }
-        public Appointment GetAppointmentById(string userName, int id)
+
+        public List<Appointment> GetAppointmentByDates(string doctorUserName, DateTime dateTime)
         {
 
-            return AppointmentDBHandler.handler.listOfAppointment.Find((obj) => obj.appointmentId == id && userName == obj.doctorUserName)!;
+            List<Appointment> listOfAppointment = appointmentDBHandler.GetList();
+            return listOfAppointment.FindAll((obj) => obj.appointmentDate == dateTime && doctorUserName == obj.doctorUserName);
+        }
+        public Appointment GetAppointmentById(string doctorUserName, int id)
+        {
+
+            List<Appointment> listOfAppointment =  appointmentDBHandler.GetList();
+            return listOfAppointment.Find((obj) => obj.appointmentId == id && doctorUserName == obj.doctorUserName)!;
 
         }
 
         public bool AddPrescriptionToAppointment(Appointment appointment)
         {
 
-            int index = AppointmentDBHandler.handler.listOfAppointment.FindIndex((obj) => obj.appointmentId == appointment.appointmentId);
-            AppointmentDBHandler.handler.listOfAppointment[index] = appointment;
+            List<Appointment> listOfAppointment = appointmentDBHandler.GetList();
+            int index = listOfAppointment.FindIndex((obj) => obj.appointmentId == appointment.appointmentId);
+            listOfAppointment[index].prescription = appointment.prescription;
 
-            if (AppointmentDBHandler.handler.UpdateEntryAtDB<Appointment>(AppointmentDBHandler.handler.appointmentPath, AppointmentDBHandler.handler.listOfAppointment))
+            if (appointmentDBHandler.Update(listOfAppointment[index]))
                 return true;
             else
                 return false;
@@ -35,50 +48,49 @@ namespace Tooth_Booth_.Controller
         }
         public bool BookNewAppointment(Appointment appointment)
         {
-            int index = DentistDBHandler.handler.listOfDentist.FindIndex((obj) => obj.userName == appointment.doctorUserName);
+            List<Dentist> listOfDentist = dentistDBHandler.GetList();
+            int index =listOfDentist.FindIndex((obj) => obj.userName == appointment.doctorUserName);
 
-            if (AppointmentDBHandler.handler.AddEntryAtDB<Appointment>(AppointmentDBHandler.handler.appointmentPath, appointment, AppointmentDBHandler.handler.listOfAppointment))
+            if (appointmentDBHandler.Add(appointment))
             {
-                DentistDBHandler.handler.listOfDentist[index].maxAppointment -= 1;
-                if (DentistDBHandler.handler.UpdateEntryAtDB<Dentist>(DentistDBHandler.handler.dentistPath, DentistDBHandler.handler.listOfDentist))
+                listOfDentist[index].maxAppointment -= 1;
+                if (dentistDBHandler.Update(listOfDentist[index]))
                     return true;
-                else
-                    DentistDBHandler.handler.listOfDentist[index].maxAppointment += 1;
-
+                
 
             }
             return false;
         }
         public List<Appointment> GetAllAppointmentByUsername(string userName)
         {
-            List<Appointment> appointments = new List<Appointment>();
-
-            appointments = AppointmentDBHandler.handler.listOfAppointment.FindAll((obj) => obj.patientsUserName == userName);
+            
+           List<Appointment> appointments = appointmentDBHandler.GetList().FindAll((obj) => obj.patientsUserName == userName);
 
             return appointments;
         }
 
-        public bool cancleAppointById(string userName, int id)
+        public bool CancleAppointById(string userName, int id)
         {
-            int index = AppointmentDBHandler.handler.listOfAppointment.FindIndex((obj) => (obj.appointmentId == id && obj.patientsUserName == userName && obj.appointmentDate == DateTime.Today));
 
+            List<Appointment> listOfAppointment = appointmentDBHandler.GetList();
+            int index = listOfAppointment.FindIndex((obj) => (obj.appointmentId == id && obj.patientsUserName == userName && obj.appointmentDate == DateTime.Today));
 
             if (index == -1)
                 return false;
-            if (AppointmentDBHandler.handler.listOfAppointment[index].prescription.Length > 0)
+            if (listOfAppointment[index].prescription.Length > 0)
             {
                 Message.Invalid("You Have Already Taken Prescription by dentist");
                 return false;
             }
-            var doctorUserName = AppointmentDBHandler.handler.listOfAppointment[index].doctorUserName;
-            AppointmentDBHandler.handler.listOfAppointment.RemoveAt(index);
-            if (AppointmentDBHandler.handler.UpdateEntryAtDB<Appointment>(AppointmentDBHandler.handler.appointmentPath, AppointmentDBHandler.handler.listOfAppointment))
+            var doctorUserName =listOfAppointment[index].doctorUserName;
+            List<Dentist> listOfDentist = dentistDBHandler.GetList();
+            if (appointmentDBHandler.Delete(listOfAppointment[index]))
             {
 
-                int doctorIndex = DentistDBHandler.handler.listOfDentist.FindIndex((obj) => obj.userName == doctorUserName);
-                DentistDBHandler.handler.listOfDentist[doctorIndex].maxAppointment += 1;
+                int doctorIndex =listOfDentist.FindIndex((obj) => obj.userName == doctorUserName);
+                listOfDentist[doctorIndex].maxAppointment += 1;
 
-                if (DentistDBHandler.handler.UpdateEntryAtDB<Dentist>(DentistDBHandler.handler.dentistPath, DentistDBHandler.handler.listOfDentist))
+                if (dentistDBHandler.Update(listOfDentist[doctorIndex]))
                     return true;
                 else
                     return false;

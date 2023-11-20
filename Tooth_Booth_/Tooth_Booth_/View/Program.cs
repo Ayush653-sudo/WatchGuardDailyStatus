@@ -1,25 +1,30 @@
 ﻿
+using ThoothTooth_Booth_.View;
 using Tooth_Booth_.common;
 using Tooth_Booth_.common.Enums;
 using Tooth_Booth_.Config;
+using Tooth_Booth_.Controller;
 using Tooth_Booth_.Controller.ControllerInterfaces;
 using Tooth_Booth_.DatabaseHandler;
 using Tooth_Booth_.View;
 
 class Program
 {
-    private IAuthController authController ;
-    public Program(IAuthController authController)
+    IAuthController authController;
+   public Program(IAuthController authController)
     {
         this.authController = authController;
     }
-    public  void StartApp()
+    
+    public void StartApp()
     {
 
+      
         while (true)
         {
 
 
+            Console.WriteLine();
             Console.WriteLine(PrintStatements.frontScreenMenu);
             try
             {
@@ -56,8 +61,8 @@ class Program
     public static void Main()
     {
 
-        Program startProgram = new Program(ControllerConfig.GetAuthController());
-        startProgram.StartApp();
+        Program startProgram = new Program(new AuthController(new AuthDashboard(),UserDBHandler.handler,ClinicDBHandler.handler));
+       startProgram.StartApp();
 
     }
 

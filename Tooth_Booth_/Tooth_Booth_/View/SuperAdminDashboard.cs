@@ -47,9 +47,9 @@ namespace Tooth_Booth_.View
                         case SelectSuperAdminStarter.AddAdmin:
                             AddMoreAdmin(user);
                             break;
-                        case SelectSuperAdminStarter.LogOut: 
-                            LogOut(user); 
-                            break;
+                        case SelectSuperAdminStarter.LogOut:
+                            Console.WriteLine(PrintStatements.logOutSucessfull);
+                            return;
                         default:
                             Console.WriteLine(PrintStatements.choiceCorrectlyPrint);
                             break;
@@ -107,7 +107,7 @@ namespace Tooth_Booth_.View
 
             Console.WriteLine("" 
                 + PrintStatements.changableFields +
-                PrintStatements.clinicNameArrow + obj.clinicName +
+                PrintStatements.cityPrint + obj.clinicCity +
                 PrintStatements.description + obj.description +
                 PrintStatements.verificationStatusShow+ obj.isverified +
                 PrintStatements.goToBack);
@@ -125,8 +125,8 @@ namespace Tooth_Booth_.View
             }
             switch (pressedKey)
             {
-                case EditClinic.Email:
-                    var newClinicName = InputTaker.ClinicNameInput(PrintStatements.clinicNamePrint);
+                case EditClinic.City:
+                    var newClinicName = InputTaker.ClinicCityInput(PrintStatements.clinicCity);
                     obj.clinicName = newClinicName;
                     break;
 
@@ -201,11 +201,7 @@ namespace Tooth_Booth_.View
 
         }
 
-        void LogOut(User superadmin)
-        {
-            superadmin = null;
-            Program.StartApp();
-        }
+       
 
     }
 }

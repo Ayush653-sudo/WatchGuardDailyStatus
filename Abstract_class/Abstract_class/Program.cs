@@ -8,6 +8,7 @@ namespace AbstractClass
     {
         public abstract void draw(); 
     }
+  
     public class Circle : Shape
     {
         public override void draw()
@@ -18,9 +19,9 @@ namespace AbstractClass
     }
     class Program:Interface_
     {
-        public void display()
+       public void display()
         {
-            Console.WriteLine("Hey Tomar");
+            Console.WriteLine("dkkdkd");
         }
         public static void Main(string[] args)
         {
@@ -38,10 +39,8 @@ namespace AbstractClass
             Printer of = new Officejet();
             of.show();
             of.print();
-           Program t = new Program();
-
-            
-            t.display();
+           Interface_ t1 = new Program();          
+            t1.display();
 
         }
     }

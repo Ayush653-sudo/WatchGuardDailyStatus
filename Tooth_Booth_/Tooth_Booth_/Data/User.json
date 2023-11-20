@@ -61,5 +61,26 @@
     "emailAddress": "tomar@gmail.com",
     "phoneNumber": "9636653732",
     "userType": 2
+  },
+  {
+    "userName": "lalu53",
+    "password": "Ayush@22",
+    "emailAddress": "lalu@gmail.com",
+    "phoneNumber": "9636653732",
+    "userType": 3
+  },
+  {
+    "userName": "Ram23",
+    "password": "Ram@22",
+    "emailAddress": "ram@gmail.com",
+    "phoneNumber": "9636653732",
+    "userType": 0
+  },
+  {
+    "userName": "rajofo",
+    "password": "kavmk@22",
+    "emailAddress": "kvamvvc@gmail.com",
+    "phoneNumber": "9636653732",
+    "userType": 1
   }
 ]

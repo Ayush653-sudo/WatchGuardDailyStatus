@@ -16,23 +16,41 @@ namespace Tooth_Booth_.Controller
     class DentistController : IDentistControllerForClinicAdmin, IDentistControllerForDentist, IDentistControllerForPatient
     {
 
+        IDBHandler<Dentist> dentistDBHandler;
+        IDBHandler<User> userDBHandler;
+        IDBHandler<Appointment> appointmentDBHandler;
+       public DentistController(IDBHandler<Dentist>dentistDBHandler,IDBHandler<User>userDBHandler,IDBHandler<Appointment>appointmentDBHandler) {
+            this.dentistDBHandler = dentistDBHandler;
+            this.userDBHandler = userDBHandler;
+            this.appointmentDBHandler = appointmentDBHandler;
+
+        }
+        
         public bool UpdateDentistAtDB(Dentist dentist)
         {
-            int i = DentistDBHandler.handler.listOfDentist.FindIndex((obj) => obj.userName == dentist.userName);
-            DentistDBHandler.handler.listOfDentist[i] = dentist;
-            if (DentistDBHandler.handler.UpdateEntryAtDB<Dentist>(DentistDBHandler.handler.dentistPath, DentistDBHandler.handler.listOfDentist))
-                return true;
-            return false;
+            return dentistDBHandler.Update(dentist);
+            
         }
         public Dentist GetDentist(string userName)
         {
-            return DentistDBHandler.handler.listOfDentist.Find((obj) => obj.userName == userName)!;
+            List<Dentist> listOfDentist = dentistDBHandler.GetList();
+            return listOfDentist.Find((obj) => obj.userName == userName)!;
+        }
+
+        public bool isPresentEarlier(string userName)
+        {
+
+            List<User> listOfUser = userDBHandler.GetList();
+            if (listOfUser.FindIndex((obj) => obj.userName == userName) != -1)
+                return true;
+            return false;
+
         }
         public Dictionary<String, String> GetDentistList(string clinicName)
         {
             Dictionary<string, string> dict = new Dictionary<string, string>();
-
-            foreach (var obj in DentistDBHandler.handler.listOfDentist)
+            List<Dentist> listOfDentist = dentistDBHandler.GetList();
+            foreach (var obj in listOfDentist)
             {
                 if (obj.clinicName == clinicName && obj.availability == true && obj.maxAppointment > 0)
                 {
@@ -45,12 +63,9 @@ namespace Tooth_Booth_.Controller
         public List<Dentist> GetDentistAtClinic(string clinicUserName)
         {
 
+            List<Dentist> listOfDentist = dentistDBHandler.GetList();
             List<Dentist> listOfDentistAtClinic = new List<Dentist>();
-            foreach (var obj in DentistDBHandler.handler.listOfDentist)
-            {
-                if (obj.clinicName == clinicUserName)
-                    listOfDentistAtClinic.Add(obj);
-            }
+            listOfDentistAtClinic=listOfDentist.FindAll((obj)=>obj.clinicName.Equals(clinicUserName));
             return listOfDentistAtClinic;
 
         }
@@ -58,19 +73,18 @@ namespace Tooth_Booth_.Controller
         public bool RegisterNewDentistAtClinic(User user, Dentist dentist)
         {
 
-            if (AuthController.isPresentEarlier(dentist.userName))
+            if (isPresentEarlier(dentist.userName))
             {
                 return false;
             }
-            if (UserDBHandler.handler.AddEntryAtDB<User>(UserDBHandler.handler.userPath, user, UserDBHandler.handler.listOfUser))
+            if (userDBHandler.Add(user))
             {
 
-                if (DentistDBHandler.handler.AddEntryAtDB<Dentist>(DentistDBHandler.handler.dentistPath, dentist, DentistDBHandler.handler.listOfDentist))
+                if (dentistDBHandler.Add(dentist))
                     return true;
                 else
                 {
-                    UserDBHandler.handler.listOfUser.Remove(user);
-                    UserDBHandler.handler.UpdateEntryAtDB<User>(UserDBHandler.handler.userPath, UserDBHandler.handler.listOfUser);
+                    userDBHandler.Delete(user);
                     return false;
                 }
             }
@@ -82,15 +96,18 @@ namespace Tooth_Booth_.Controller
         public bool DeleteDentistAtClinic(string clinicUserName, string userName)
         {
 
-            int index = DentistDBHandler.handler.listOfDentist.FindIndex((obj) => userName == obj.userName && clinicUserName == obj.clinicName);
-            int userIndex = UserDBHandler.handler.listOfUser.FindIndex((obj) => obj.userName == userName);
-            if (index == -1)
+            List<Dentist> listOfDentist = dentistDBHandler.GetList();
+            List<User>listOfUser=userDBHandler.GetList();
+            Dentist dentistToBeDeleted = listOfDentist.Find((obj) => userName == obj.userName && clinicUserName == obj.clinicName)!;
+            int userIndex = listOfUser.FindIndex((obj) => obj.userName == userName);
+            if (dentistToBeDeleted == null)
             {
                 Message.Invalid("No dentist found");
                 return false;
             }
 
-            int appointmentIndexForDentist = AppointmentDBHandler.handler.listOfAppointment.FindIndex((obj) => obj.doctorUserName == userName && obj.appointmentDate == DateTime.Today);
+            List<Appointment> listOfAppointment = appointmentDBHandler.GetList();
+            int appointmentIndexForDentist =listOfAppointment.FindIndex((obj) => obj.doctorUserName == userName && obj.appointmentDate == DateTime.Today);
             if (appointmentIndexForDentist != -1)
             {
 
@@ -98,12 +115,9 @@ namespace Tooth_Booth_.Controller
                 return false;
             }
 
-            DentistDBHandler.handler.listOfDentist.RemoveAt(index);
-            UserDBHandler.handler.listOfUser.RemoveAt(userIndex);
-
-            if (DentistDBHandler.handler.UpdateEntryAtDB<Dentist>(DentistDBHandler.handler.dentistPath, DentistDBHandler.handler.listOfDentist))
+            if (dentistDBHandler.Delete(dentistToBeDeleted))
             {
-                if (UserDBHandler.handler.UpdateEntryAtDB<User>(UserDBHandler.handler.userPath, UserDBHandler.handler.listOfUser))
+                if (userDBHandler.Delete(listOfUser[userIndex]))
                     return true;
                 else
                 {

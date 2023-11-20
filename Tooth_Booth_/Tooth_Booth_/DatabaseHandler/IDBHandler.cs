@@ -1,12 +1,13 @@
-﻿
+﻿using Tooth_Booth_.models;
 
-namespace Tooth_Booth_.DatabaseHandler
+namespace Tooth_Booth_.database
 {
-    public interface IDBHandler
-    { 
-        public bool AddEntryAtDB<T>(string path, T obj, List<T> list);
-        public bool UpdateEntryAtDB<T>(string path, List<T> list);
-        
-
+    public interface IDBHandler<T>
+    {
+        bool UpdateEntryAtDB<T>(string path, List<T> list);
+        bool Add(T entity);
+        bool Delete(T entityToBeDeleted);
+        List<T> GetList();
+        bool Update(T newT);
     }
 }

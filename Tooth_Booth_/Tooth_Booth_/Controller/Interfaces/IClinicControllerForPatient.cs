@@ -2,7 +2,7 @@
 
 namespace Tooth_Booth_.Controller.Interfaces
 {
-    internal interface IClinicControllerForPatient
+    public interface IClinicControllerForPatient
     {     
         List<string> GetListOFClinicByCityName(string cityName);
 

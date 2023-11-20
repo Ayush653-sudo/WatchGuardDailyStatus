@@ -4,19 +4,8 @@ using Tooth_Booth_.DatabaseHandler;
 
 namespace Tooth_Booth_.database
 {
-    abstract public class DBHandler:IDBHandler
-       {
-              
-        public bool AddEntryAtDB<T>(string path,T obj,List<T>list)
-        {
-
-            list.Add(obj);
-            if (UpdateEntryAtDB<T>(path, list))
-                return true;
-
-            else
-                return false;
-        }
+    abstract public class DBHandler 
+    {
 
         public bool UpdateEntryAtDB<T>(string path, List<T> list)
         {
@@ -31,6 +20,6 @@ namespace Tooth_Booth_.database
             }
             return true;
         }
-               
+
     }
 }

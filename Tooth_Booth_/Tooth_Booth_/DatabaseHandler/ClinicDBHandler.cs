@@ -6,14 +6,14 @@ using Tooth_Booth_.View;
 
 namespace Tooth_Booth_.DatabaseHandler
 {
-   sealed public class ClinicDBHandler:DBHandler
+   sealed public class ClinicDBHandler:DBHandler,IDBHandler<Clinic>
     {
 
 
-        public List<Clinic> listOfClinic;
+         List<Clinic> listOfClinic;
 
-        public string clinicPath = @"C:\Users\atomar\source\repos\ConsoleApp1\Tooth_Booth_\Tooth_Booth_\Data\Clinic.json";
-        static ClinicDBHandler _handler = null;
+        string clinicPath = @"C:\Users\atomar\source\repos\ConsoleApp1\Tooth_Booth_\Tooth_Booth_\Data\Clinic.json";
+        static IDBHandler<Clinic> _handler = null;
    
       private ClinicDBHandler()
         {
@@ -35,7 +35,7 @@ namespace Tooth_Booth_.DatabaseHandler
             }
 
         }
-        public static ClinicDBHandler handler
+        public static IDBHandler<Clinic> handler
         {
             get
             {
@@ -45,6 +45,28 @@ namespace Tooth_Booth_.DatabaseHandler
                 }
                 return _handler;
             }
+        }
+        public List<Clinic> GetList()
+        {
+            return listOfClinic;
+        }
+        public bool Update(Clinic newClinic)
+        {
+            int index = listOfClinic.FindIndex((obj) => obj.clinicName.Equals(newClinic.clinicName));
+            listOfClinic[index] = newClinic;
+            return UpdateEntryAtDB<Clinic>(clinicPath, listOfClinic);
+        }
+        public bool Delete(Clinic clinic)
+        {
+            int index = listOfClinic.FindIndex((obj) => obj.clinicName.Equals(clinic.clinicName));
+            listOfClinic.RemoveAt(index);
+            return UpdateEntryAtDB<Clinic>(clinicPath, listOfClinic);
+        }
+
+        public bool Add(Clinic clinic)
+        {
+            listOfClinic.Add(clinic);
+            return UpdateEntryAtDB<Clinic>(clinicPath, listOfClinic);
         }
 
     }

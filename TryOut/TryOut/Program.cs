@@ -14,7 +14,7 @@ public class B : A
     //{
     //    Console.WriteLine("static of class B called");
     //}
-    private void fun()
+    public override void fun()
     {
         Console.WriteLine("simple function of class B is called");
     }
@@ -26,11 +26,12 @@ public class Program
     public static void Main()
     {
         Console.WriteLine("Hello World");
-        B obj = new B();
-        // obj.fun();//will not work
-        staticCheck obj1 = new staticCheck();
+        A obj = new B();
+        obj.fun();//will not work
+       // staticCheck obj1 = new staticCheck();
         int? a = null;
         int b = 10;
-        Console.WriteLine(a || b);
+      //  Console.WriteLine(a || b);
+
     }
 }

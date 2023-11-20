@@ -41,7 +41,7 @@ namespace Tooth_Booth_.common
         public static string clinicCityArrow="City:             -> ";
         public static string verifiedArrow="IsVerifired:      -> ";
         public static string changableFields = "You Could Only Change Following Fields:";
-        public static string emailPrint="\n 1)Email: ";
+        public static string cityPrint="\n 1)City: ";
         public static string phoneNumberShow="\n 2)PhoneNumber : ";
         public static string description="\n 3)Description: " ;
         public static string verificationStatusShow="\n 4)Verification Status: ";
@@ -122,7 +122,7 @@ namespace Tooth_Booth_.common
            +"Press 4 To Logout\n";
         public static string registrationStartView = "press 1 to register as a Patient\n"
             + "Press 2 to register new clinic\n" +
-         "Press 3 To Go Back\n" +
+      
             "Enter Your Choice\n";
         public static string dentistCategory = "Press 1 for GeneralDentist," +
                 "\nPress 2 For Pedodontist," +

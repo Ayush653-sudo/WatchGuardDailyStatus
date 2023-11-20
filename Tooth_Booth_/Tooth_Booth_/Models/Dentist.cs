@@ -8,8 +8,6 @@ namespace Tooth_Booth_.models
 
     public class Dentist
     {
-
-
        public string userName;
        public string clinicName;
        public DentistCategory category;

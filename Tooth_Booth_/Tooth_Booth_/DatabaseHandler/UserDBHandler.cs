@@ -6,13 +6,13 @@ using Tooth_Booth_.View;
 
 namespace Tooth_Booth_.DatabaseHandler
 {
-    sealed class UserDBHandler:DBHandler
+    sealed class UserDBHandler:DBHandler,IDBHandler<User>
     {
 
-        public List<User> listOfUser;
+         List<User> listOfUser;
         
-        public string userPath  = @"C:\Users\atomar\source\repos\ConsoleApp1\Tooth_Booth_\Tooth_Booth_\Data\User.json";
-        static UserDBHandler _handler = null;
+        string userPath  = @"C:\Users\atomar\source\repos\ConsoleApp1\Tooth_Booth_\Tooth_Booth_\Data\User.json";
+        static IDBHandler<User> _handler = null;
   
         private UserDBHandler()
         {
@@ -37,7 +37,7 @@ namespace Tooth_Booth_.DatabaseHandler
             }
 
         }
-        public static UserDBHandler handler
+        public static IDBHandler<User> handler
         {
             get
             {
@@ -47,6 +47,28 @@ namespace Tooth_Booth_.DatabaseHandler
                 }
                 return _handler;
             }
+        }
+        public List<User> GetList()
+        {
+            return listOfUser;
+        }
+        public bool Update(User newUser)
+        {
+            int index = listOfUser.FindIndex((obj) => obj.userName.Equals(newUser.userName));
+            listOfUser[index] = newUser;
+            return UpdateEntryAtDB<User>(userPath, listOfUser);
+        }
+        public bool Delete(User user)
+        {
+            int index = listOfUser.FindIndex((obj) => obj.userName.Equals(user.userName));
+            listOfUser.RemoveAt(index);
+            return UpdateEntryAtDB<User>(userPath, listOfUser);
+        }
+
+        public bool Add(User user)
+        {
+            listOfUser.Add(user);
+            return UpdateEntryAtDB<User>(userPath, listOfUser);
         }
     }
 }

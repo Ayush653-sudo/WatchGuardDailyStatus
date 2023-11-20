@@ -38,7 +38,7 @@ namespace Tooth_Booth_.View
                 Console.WriteLine(printStatement);
                 userName = Console.ReadLine()!.Trim();
 
-                if (CheckValidity.NullCheck(userName) || CheckValidity.CheckLength(userName, 5) || !CheckValidity.CheckRegex(userName, CheckValidity.hasOnlyAlphaNumeric))
+                if (CheckValidity.NullCheck(userName) || CheckValidity.IsNotValidLength(userName, 5) || !CheckValidity.CheckRegex(userName, CheckValidity.hasOnlyAlphaNumeric))
                 {
 
                     Console.WriteLine(PrintStatements.erroruserNamePrint);
@@ -124,9 +124,10 @@ namespace Tooth_Booth_.View
 
             while (true)
             {
+                Console.WriteLine(printStatement);
                 clinicName = Console.ReadLine()!.Trim();
 
-                if (CheckValidity.CheckLength(clinicName, 6) || CheckValidity.NullCheck(clinicName))
+                if (CheckValidity.IsNotValidLength(clinicName, 6) || CheckValidity.NullCheck(clinicName))
                 {
 
                     Console.WriteLine(PrintStatements.errorClinicPrint);
@@ -146,7 +147,7 @@ namespace Tooth_Booth_.View
             {
                 Console.WriteLine(printStatement);
                 description = Console.ReadLine()!.Trim();
-                if (!CheckValidity.CountWords(description, 6))
+                if (!CheckValidity.IsValidCountWords(description, 6))
                 {
                     Console.WriteLine(PrintStatements.errorDescriptionPrint);
 
@@ -162,8 +163,9 @@ namespace Tooth_Booth_.View
             string clinicCity;
             while (true)
             {
+                Console.WriteLine(printStatement);
                 clinicCity = Console.ReadLine()!.ToLower().Trim();
-                if (CheckValidity.NullCheck(clinicCity) || !CheckValidity.CheckRegex(clinicCity, CheckValidity.hasOnlyAlphabet) || CheckValidity.CheckLength(clinicCity, 3))
+                if (CheckValidity.NullCheck(clinicCity) || !CheckValidity.CheckRegex(clinicCity, CheckValidity.hasOnlyAlphabet) || CheckValidity.IsNotValidLength(clinicCity, 3))
                 {
                     Console.WriteLine(PrintStatements.errorClinicCityPrint);
 

@@ -5,7 +5,7 @@ VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tooth_Booth_", "Tooth_Booth_\Tooth_Booth_.csproj", "{4E7847CD-8033-4425-AFE4-5937DF6E4C2E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppTesting", "AppTesting\AppTesting.csproj", "{E5B1DA9C-15AB-4795-B15A-3938E591B92C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tooth_Booth_.test", "AppTesting\Tooth_Booth_.test.csproj", "{E5B1DA9C-15AB-4795-B15A-3938E591B92C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -2,7 +2,7 @@
 
 namespace Tooth_Booth_.Controller.Interfaces
 {
-    internal interface IDentistControllerForDentist
+    public interface IDentistControllerForDentist
     {
         bool DeleteDentistAtClinic(string clinicUserName, string userName);
         Dentist GetDentist(string userName);

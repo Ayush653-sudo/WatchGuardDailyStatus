@@ -18,20 +18,34 @@ namespace ThoothTooth_Booth_.View
             Console.WriteLine("-------------------------------------------LOGIN------------------------------------------");
 
 
-        userLabel: Console.WriteLine(PrintStatements.userNamePrint);
-            var userName = Console.ReadLine()!.Trim();
-            if (CheckValidity.NullCheck(userName))
+            string userName;
+            while (true)
             {
-                Console.WriteLine(PrintStatements.erroruserNamePrint);
-                goto userLabel;
-            }
-        passLabel: Console.WriteLine(PrintStatements.passwordPrint);
+                Console.WriteLine(PrintStatements.userNamePrint);
+                userName = Console.ReadLine()!.Trim();
+                if (CheckValidity.NullCheck(userName))
+                {
+                    Console.WriteLine(PrintStatements.erroruserNamePrint);
 
-            var password = InputTaker.MaskPassword().Trim();
-            if (CheckValidity.NullCheck(password))
+                }
+                else
+                {
+                    break;
+                }
+            }
+            string password;
+            while (true)
             {
-                Console.WriteLine(PrintStatements.errrorPasswordPrint);
-                goto passLabel;
+                Console.WriteLine(PrintStatements.passwordPrint);
+
+                password = InputTaker.MaskPassword().Trim();
+                if (CheckValidity.NullCheck(password))
+                {
+                    Console.WriteLine(PrintStatements.errrorPasswordPrint);
+
+                }
+                else
+                    break;
             }
             Dictionary<string, string> dict = new Dictionary<string, string>();
             dict["username"] = userName;
@@ -63,9 +77,7 @@ namespace ThoothTooth_Booth_.View
                         return RegistrationFoam.GetUserDetails(1);
 
 
-                    case Registrationstarter.GoBack:
-                        Program.StartApp();
-                        return null;
+                   
                     default:
                         Console.WriteLine(PrintStatements.choiceCorrectlyPrint);
                         RegistrationView();

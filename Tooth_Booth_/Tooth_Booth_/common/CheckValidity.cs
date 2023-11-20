@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace Tooth_Booth_.common
 {
-   class CheckValidity
+  public class CheckValidity
     {
 
 
@@ -25,7 +25,7 @@ namespace Tooth_Booth_.common
                 return false;
         }
 
-        public static bool CheckLength(string s, int length)
+        public static bool IsNotValidLength(string s, int length)
         {
             if (s.Length < length)
                 return true;
@@ -34,7 +34,7 @@ namespace Tooth_Booth_.common
 
         }
         
-        public static bool CountWords(String s,int max)
+        public static bool IsValidCountWords(String s,int max)
         {
             if (s.Split(" ").Count() > max)
                 return true;

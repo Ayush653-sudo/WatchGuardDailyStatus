@@ -22,7 +22,8 @@ namespace Tooth_Booth_.models
         {
 
             int id = new Random().Next(4444);
-            while (AppointmentDBHandler.handler.listOfAppointment.FindIndex((obj) => obj.appointmentId == id) != -1)
+           
+            while (AppointmentDBHandler.handler.GetList().FindIndex((obj) => obj.appointmentId == id) != -1)
                 id = new Random().Next(4444);
 
             this.appointmentId = id;
@@ -34,6 +35,20 @@ namespace Tooth_Booth_.models
             this.paymentType = paymentType; 
 
         }
-       
+
+        public override bool Equals(object obj)
+        {
+            Appointment appointment = obj as Appointment;
+            if (appointment == null) return false;
+
+            return
+                this.patientsUserName.Equals(appointment.patientsUserName) &&
+                this.appointmentDate.Equals(appointment.appointmentDate) &&
+                this.clinicName.Equals(appointment.clinicName) &&
+                this.doctorUserName.Equals(appointment.doctorUserName) &&
+                this.appointmentId.Equals(appointment.appointmentId) &&
+                this.paymentType.Equals(appointment.paymentType) &&
+                this.prescription.Equals(appointment.prescription);
+        }
     }
 }

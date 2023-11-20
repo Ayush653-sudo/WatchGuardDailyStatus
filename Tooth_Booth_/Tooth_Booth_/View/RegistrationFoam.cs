@@ -17,7 +17,7 @@ namespace ThoothTooth_Booth_.View
 
             var password =InputTaker.PasswordInput(PrintStatements.passwordPrint);
 
-            var emailAddress = InputTaker.EmailInput(PrintStatements.emailPrint);
+            var emailAddress = InputTaker.EmailInput(PrintStatements.emailAddressPrint);
 
             var phoneNumber = InputTaker.PhoneNumberInput(PrintStatements.phoneNumberPrint);
             UserType userType = (UserType)typeOfUser;

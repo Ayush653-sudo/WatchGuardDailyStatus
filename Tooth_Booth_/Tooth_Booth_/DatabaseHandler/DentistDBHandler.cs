@@ -1,4 +1,5 @@
 ﻿
+using System.Xml.Linq;
 using Tooth_Booth_.common;
 using Tooth_Booth_.database;
 using Tooth_Booth_.models;
@@ -6,26 +7,28 @@ using Tooth_Booth_.View;
 
 namespace Tooth_Booth_.DatabaseHandler
 {
- sealed public class DentistDBHandler:DBHandler
+    public class DentistDBHandler : DBHandler, IDBHandler<Dentist>
     {
-        public List<Dentist> listOfDentist;
-           
-        public string dentistPath= @"C:\Users\atomar\source\repos\ConsoleApp1\Tooth_Booth_\Tooth_Booth_\Data\Dentist.json";
-        static DentistDBHandler _handler = null;
-        
+        List<Dentist> listOfDentist;
+        string dentistPath = @"C:\Users\atomar\source\repos\ConsoleApp1\Tooth_Booth_\Tooth_Booth_\Data\Dentist.json";
+        static IDBHandler<Dentist> _handler;
+
+
+
         private DentistDBHandler()
-        {      
-           
+        {
+
             listOfDentist = new List<Dentist>();
             try
             {
                 string dentistFileContent = File.ReadAllText(dentistPath);
 
-               if(!string.IsNullOrEmpty(dentistFileContent))
-                listOfDentist = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Dentist>>(dentistFileContent)!;
+                if (!string.IsNullOrEmpty(dentistFileContent))
+                    listOfDentist = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Dentist>>(dentistFileContent)!;
 
             }
-            catch(Exception ex) {
+            catch (Exception ex)
+            {
 
 
                 ExceptionDBHandler.handler.AddEntryToFile(ex.ToString());
@@ -34,7 +37,7 @@ namespace Tooth_Booth_.DatabaseHandler
             }
 
         }
-        public static DentistDBHandler handler
+        public static IDBHandler<Dentist> handler
         {
             get
             {
@@ -45,5 +48,31 @@ namespace Tooth_Booth_.DatabaseHandler
                 return _handler;
             }
         }
+
+        public List<Dentist> GetList()
+        {
+            return listOfDentist;
+        }
+        public bool Update(Dentist newDentist)
+        {
+            int index = listOfDentist.FindIndex((obj) => obj.userName.Equals(newDentist.userName));
+            listOfDentist[index] = newDentist;
+            return UpdateEntryAtDB<Dentist>(dentistPath, listOfDentist);
+        }
+        public bool Delete(Dentist dentist)
+        {
+            int index = listOfDentist.FindIndex((obj) => obj.userName.Equals(dentist.userName));
+            listOfDentist.RemoveAt(index);
+            return UpdateEntryAtDB<Dentist>(dentistPath, listOfDentist);
+        }
+
+        public bool Add(Dentist dentist)
+        {
+            listOfDentist.Add(dentist);
+            return UpdateEntryAtDB<Dentist>(dentistPath, listOfDentist);
+        }
+
+
+
     }
 }

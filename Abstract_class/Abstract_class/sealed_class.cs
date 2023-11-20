@@ -27,7 +27,7 @@ namespace Sealed_Class
     class LaserJet : Printer
     {
 
-        sealed override public void show()
+         sealed override public void show()
         {
             Console.WriteLine("display dimension : 12*12");
         }

@@ -15,16 +15,13 @@ namespace Tooth_Booth_.Controller
 
     internal class SuperAdminController : ISuperAdminController
     {
-
-
-      
-
+        IDBHandler<User> userDBHandler;
+        public SuperAdminController(IDBHandler<User>userDBHandler) {
+        this.userDBHandler = userDBHandler;
+        }
         public bool AddNewAdmin(User user)
         {
-
-          
-
-            return UserDBHandler.handler.AddEntryAtDB<User>(UserDBHandler.handler.userPath, user, UserDBHandler.handler.listOfUser);
+            return userDBHandler.Add(user);
         }
 
 

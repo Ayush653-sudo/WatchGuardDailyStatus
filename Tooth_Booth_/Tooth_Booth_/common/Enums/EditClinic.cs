@@ -8,7 +8,7 @@ namespace Tooth_Booth_.common.Enums
 {
     public enum EditClinic
     {
-        Email = 1,
+        City = 1,
         PhoneNumber,
         Description,
         VerificationStatus,

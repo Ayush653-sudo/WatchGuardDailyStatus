@@ -12,7 +12,7 @@ namespace Tooth_Booth_.View
     class ClinicAdminDashboard : IClinicAdminDashboard
     {
        private IDentistControllerForClinicAdmin dentistController;
-        private DentistDBHandler db = new DentistDBHandler();
+        
         public ClinicAdminDashboard( IDentistControllerForClinicAdmin dentistController)
         {
            
@@ -46,8 +46,8 @@ namespace Tooth_Booth_.View
                             break;
 
                         case ClinicStarter.LogOut:
+                            Console.WriteLine(PrintStatements.logOutSucessfull);
                             obj = null;
-                            Program.StartApp();
                             return;
 
                     }

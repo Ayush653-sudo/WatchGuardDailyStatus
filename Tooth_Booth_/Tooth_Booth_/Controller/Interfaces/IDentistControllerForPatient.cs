@@ -2,7 +2,7 @@
 
 namespace Tooth_Booth_.Controller.Interfaces
 {
-    internal interface IDentistControllerForPatient
+    public interface IDentistControllerForPatient
     {
         Dictionary<string, string> GetDentistList(string clinicName);
 

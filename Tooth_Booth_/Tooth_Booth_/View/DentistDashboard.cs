@@ -48,8 +48,9 @@ namespace Tooth_Booth_.View
                             break;
 
                         case DentistStarter.LogOut:
-                            LogOut(dentist);
-                            break;
+                            Console.WriteLine(PrintStatements.logOutSucessfull);
+                            return;
+                          
 
                         default:
                             Console.WriteLine(PrintStatements.choiceCorrectlyPrint);
@@ -90,8 +91,6 @@ namespace Tooth_Booth_.View
 
         void ViewAppointAsDates(Dentist dentist)
         {
-            Console.WriteLine(PrintStatements.dateOfAppointment);
-            string dT = Console.ReadLine()!;
             DateTime dateTime=InputTaker.DeteTimeInput(PrintStatements.dateOfAppointment);
                 List<Appointment> listOfAppointmentByDates = new List<Appointment>();
                 listOfAppointmentByDates = appointmentController.GetAppointmentByDates(dentist.userName, dateTime);
@@ -117,7 +116,6 @@ namespace Tooth_Booth_.View
         void SelectAppointmentById(Dentist dentist)
         {
 
-            Console.WriteLine(PrintStatements.enterAppoitmentID);
             int appointId=InputTaker.AppointmentIdInput(PrintStatements.enterAppoitmentID);
             Appointment appointment = appointmentController.GetAppointmentById(dentist.userName, appointId);
 
@@ -143,8 +141,6 @@ namespace Tooth_Booth_.View
             }
             else
             {
-
-                Console.WriteLine(PrintStatements.addIt);
                 var prescription = InputTaker.AddPrescription(PrintStatements.addIt);
                 appointment.prescription = prescription;
                 appointmentController.AddPrescriptionToAppointment(appointment);
@@ -164,11 +160,6 @@ namespace Tooth_Booth_.View
                     Console.WriteLine(PrintStatements.someThingWentWrong);
 
         }
-        void LogOut(Dentist dentist)
-        {
-            dentist = null;
-            Console.WriteLine(PrintStatements.logOutSucessfull);
-            Program.StartApp();
-        }
+       
     }
 }

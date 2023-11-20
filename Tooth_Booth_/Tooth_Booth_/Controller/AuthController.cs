@@ -4,6 +4,7 @@ using Tooth_Booth_.common;
 using Tooth_Booth_.common.Enums;
 using Tooth_Booth_.Config;
 using Tooth_Booth_.Controller.ControllerInterfaces;
+using Tooth_Booth_.database;
 using Tooth_Booth_.DatabaseHandler;
 using Tooth_Booth_.models;
 using Tooth_Booth_.View;
@@ -17,21 +18,28 @@ namespace Tooth_Booth_.Controller
 
     public class AuthController : IAuthController
     {
-        IAuthDashboard authDashboard;
-        public AuthController(IAuthDashboard authDashboard)
+        IAuthDashboard _authDashboard;
+        IDBHandler<User> userDBHandler;
+        IDBHandler<Clinic> clinicDBHandler;
+        public AuthController(IAuthDashboard authDashboard, IDBHandler<User> userDBHandler, IDBHandler<Clinic> clinicDBHandler)
         {
-            this.authDashboard = authDashboard;
+            this._authDashboard = authDashboard;
+            this.userDBHandler = userDBHandler;
+            this.clinicDBHandler = clinicDBHandler;
         }
 
 
         public User GetUserFromDB(Dictionary<string, string> logInCred)
         {
-            return UserDBHandler.handler.listOfUser.Find((obj) => obj.userName == logInCred["username"] && obj.password == logInCred["password"])!;
+            List<User> listOfUser = userDBHandler.GetList();
+            return listOfUser.Find((obj) => obj.userName == logInCred["username"] && obj.password == logInCred["password"])!;
 
         }
-        public static bool  isPresentEarlier(string userName)
+        public bool isPresentEarlier(string userName)
         {
-            if (UserDBHandler.handler.listOfUser.FindIndex((obj) => obj.userName == userName) != -1)
+
+            List<User> listOfUser = userDBHandler.GetList();
+            if (listOfUser.FindIndex((obj) => obj.userName == userName) != -1)
                 return true;
             return false;
 
@@ -39,12 +47,12 @@ namespace Tooth_Booth_.Controller
 
         public void LogIn()
         {           
-            Dictionary<string, string> logInCred = authDashboard.LogInView();
+            Dictionary<string, string> logInCred = _authDashboard.LogInView();
 
             User userObj = GetUserFromDB(logInCred);
             if (userObj == null)
             {
-                Message.Invalid("Please Enter Correct Credentials No User Found");
+                Message.Invalid("\nPlease Enter Correct Credentials No User Found");
                 return;
             }
 
@@ -52,7 +60,7 @@ namespace Tooth_Booth_.Controller
             {
               
                 IClinicAdminDashboard clinicAdminDashboard = DashboardConfig.GetClinicAdminDashboard();
-                Clinic clinic=ClinicDBHandler.handler.listOfClinic.Find((obj)=>obj.listOFClinicAdmin.Contains(userObj.userName))!;
+                Clinic clinic=clinicDBHandler.GetList().Find((obj)=>obj.listOFClinicAdmin.Contains(userObj.userName))!;
                 clinicAdminDashboard.StartClinicAdminDashboard(clinic);
             }
             else if (userObj.userType == UserType.Patient)
@@ -80,30 +88,28 @@ namespace Tooth_Booth_.Controller
         public void SignUp()
         {
 
-            User obj = authDashboard.RegistrationView();
+            User obj = _authDashboard.RegistrationView();
             if (!isPresentEarlier(obj.userName))
             {
-                if (UserDBHandler.handler.AddEntryAtDB<User>(UserDBHandler.handler.userPath, obj, UserDBHandler.handler.listOfUser))
+                if (userDBHandler.Add(obj))
                 {
                     if (obj.userType == UserType.clinicAdmin)
                     {
                         Clinic clinicObj = RegistrationFoam.ClinicRegistrationDetails(obj.userName);
-                        int index=ClinicDBHandler.handler.listOfClinic.FindIndex((obj)=>obj.clinicName==clinicObj.clinicName);
+                        int index=clinicDBHandler.GetList().FindIndex((obj)=>obj.clinicName==clinicObj.clinicName);
                         if(index==-1)
                         {
                             Message.Invalid("Clinic with this clinic name is already present");
-                            UserDBHandler.handler.listOfUser.Remove(obj);
-                            UserDBHandler.handler.AddEntryAtDB<User>(UserDBHandler.handler.userPath, obj, UserDBHandler.handler.listOfUser);
+                            userDBHandler.Delete(obj);
                             return;
                         }
 
-                        if (ClinicDBHandler.handler.AddEntryAtDB<Clinic>(ClinicDBHandler.handler.clinicPath, clinicObj, ClinicDBHandler.handler.listOfClinic))
+                        if (clinicDBHandler.Add(clinicObj))
                             Message.Status("You Have Registered Sucessfully");
                         else
                         {
                             Message.Invalid(PrintStatements.someThingWentWrong);
-                            UserDBHandler.handler.listOfUser.Remove(obj);
-                            UserDBHandler.handler.AddEntryAtDB<User>(UserDBHandler.handler.userPath, obj, UserDBHandler.handler.listOfUser);
+                            userDBHandler.Delete(obj);
                         }
 
                     }

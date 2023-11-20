@@ -48,8 +48,8 @@ namespace Tooth_Booth_.View
                             break;
 
                         case PatientDashboardE.Logout:
-                            LogOut(patient);
-                            break;
+                            Console.WriteLine(PrintStatements.logOutSucessfull);
+                            return;
 
                         case PatientDashboardE.CancleAppointment:
                             CancelAppointmentByIdView(patient);
@@ -216,7 +216,7 @@ namespace Tooth_Booth_.View
         private void CancelAppointmentByIdView(User patient)
         {
             int appointmentId=InputTaker.AppointmentIdInput(PrintStatements.cancleAppointmentId);            
-            bool flag = appointmentController.cancleAppointById(patient.userName, appointmentId);
+            bool flag = appointmentController.CancleAppointById(patient.userName, appointmentId);
             if (flag)
                 Console.WriteLine(PrintStatements.appointmentEntryDeleted);
             else
@@ -224,11 +224,7 @@ namespace Tooth_Booth_.View
 
         }
 
-        private void LogOut(User patient)
-        {
-            patient = null;
-            Program.StartApp();
-        }
+       
 
     }
 }
