@@ -38,7 +38,7 @@ namespace Tooth_Booth_.models
 
         public override bool Equals(object obj)
         {
-            Appointment appointment = obj as Appointment;
+            Appointment? appointment = obj as Appointment;
             if (appointment == null) return false;
 
             return

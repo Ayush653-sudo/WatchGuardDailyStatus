@@ -60,7 +60,7 @@ namespace Tooth_Booth_.DatabaseHandler
         }
         public bool Delete(User user)
         {
-            int index = listOfUser.FindIndex((obj) => obj.userName.Equals(user.userName));
+            int index = listOfUser.FindIndex((obj) => obj.userName==user.userName);
             listOfUser.RemoveAt(index);
             return UpdateEntryAtDB<User>(userPath, listOfUser);
         }

@@ -1,14 +1,11 @@
-using Tooth_Booth_.Config;
+
 using Tooth_Booth_.common.Enums;
 using Tooth_Booth_.Controller;
 using Tooth_Booth_.models;
 using Tooth_Booth_.Controller.Interfaces;
 using Moq;
-using Tooth_Booth_.DatabaseHandler;
-using FakeItEasy;
 using Tooth_Booth_.test.DummyData.test;
 using Tooth_Booth_.database;
-
 namespace AppTesting.Controller
 {
     [TestClass]
@@ -47,7 +44,7 @@ namespace AppTesting.Controller
             appointment.paymentType = PaymentType.Cash;
             bool expected = true;
             appointmentDBHandler.Setup(x => x.GetList()).Returns(DummyData.listOfAppointment);
-            appointmentDBHandler.Setup(x => x.Update(appointment)).Returns(true);
+            appointmentDBHandler.Setup(x => x.Update(It.IsAny<Appointment>())).Returns(true);
             IAppointmentControllerForDentist _appointmentControllerForDentist = new AppointmentController(dentistDBHandler.Object, appointmentDBHandler.Object);
             bool actual = _appointmentControllerForDentist.AddPrescriptionToAppointment(appointment);
             Assert.AreEqual(expected,actual);
@@ -66,8 +63,8 @@ namespace AppTesting.Controller
             appointment.paymentType = PaymentType.Cash;
             bool expected = true;
             dentistDBHandler.Setup(x => x.GetList()).Returns(DummyData.listOfDentist);
-            appointmentDBHandler.Setup(x=>x.Add(appointment)).Returns(true);
-            dentistDBHandler.Setup(x => x.Update(DummyData.listOfDentist[0])).Returns(true);
+            appointmentDBHandler.Setup(x=>x.Add(It.IsAny<Appointment>())).Returns(true);
+            dentistDBHandler.Setup(x => x.Update(It.IsAny<Dentist>())).Returns(true);
             IAppointmentControllerForPatient _appointmentControllerForPatient = new AppointmentController(dentistDBHandler.Object, appointmentDBHandler.Object);
             bool actual=_appointmentControllerForPatient.BookNewAppointment(appointment);
             Assert.AreEqual(expected,actual);
@@ -77,23 +74,17 @@ namespace AppTesting.Controller
         public void CancleAppointById_ValidUserNameAndId_True()
         {
             string userName = "lalu53";
-            int id = 663;
-           
+            int id = 663;           
             bool expected = true;
             appointmentDBHandler.Setup(x => x.GetList()).Returns(DummyData.listOfAppointment);
             dentistDBHandler.Setup(x => x.GetList()).Returns(DummyData.listOfDentist);
-            appointmentDBHandler.Setup(x => x.Delete(DummyData.listOfAppointment[2])).Returns(true);
-            dentistDBHandler.Setup(x => x.Update(DummyData.listOfDentist[0])).Returns(true);
+            appointmentDBHandler.Setup(x => x.Delete(It.IsAny<Appointment>())).Returns(true);
+            dentistDBHandler.Setup(x => x.Update(It.IsAny<Dentist>())).Returns(true);
             IAppointmentControllerForPatient _appointmentControllerForPatient = new AppointmentController(dentistDBHandler.Object, appointmentDBHandler.Object);          
             bool actual=_appointmentControllerForPatient.CancleAppointById(userName, id);
             Assert.AreEqual(expected,actual);
 
         }
-        
-
-         
-        
-
 
 
     }

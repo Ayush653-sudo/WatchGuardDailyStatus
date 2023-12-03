@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 using Tooth_Booth_.Controller.ControllerInterfaces;
 using Tooth_Booth_.Controller.Interfaces;
 using Tooth_Booth_.database;
-using Tooth_Booth_.DatabaseHandler;
 using Tooth_Booth_.models;
 using Tooth_Booth_.View;
 
 namespace Tooth_Booth_.Controller
 {
 
-    class DentistController : IDentistControllerForClinicAdmin, IDentistControllerForDentist, IDentistControllerForPatient
+    public class DentistController : IDentistControllerForClinicAdmin, IDentistControllerForDentist, IDentistControllerForPatient
     {
 
         IDBHandler<Dentist> dentistDBHandler;
@@ -31,13 +26,13 @@ namespace Tooth_Booth_.Controller
             return dentistDBHandler.Update(dentist);
             
         }
-        public Dentist GetDentist(string userName)
+        public Dentist GetDentistByUserName(string userName)
         {
             List<Dentist> listOfDentist = dentistDBHandler.GetList();
             return listOfDentist.Find((obj) => obj.userName == userName)!;
         }
 
-        public bool isPresentEarlier(string userName)
+         bool IsPresentEarlier(string userName)
         {
 
             List<User> listOfUser = userDBHandler.GetList();
@@ -73,7 +68,7 @@ namespace Tooth_Booth_.Controller
         public bool RegisterNewDentistAtClinic(User user, Dentist dentist)
         {
 
-            if (isPresentEarlier(dentist.userName))
+            if (IsPresentEarlier(dentist.userName))
             {
                 return false;
             }

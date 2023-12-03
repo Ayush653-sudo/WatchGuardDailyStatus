@@ -2,7 +2,6 @@
 using System;
 using Tooth_Booth_.common;
 using Tooth_Booth_.common.Enums;
-using Tooth_Booth_.Controller.ControllerInterfaces;
 using Tooth_Booth_.Controller.Interfaces;
 using Tooth_Booth_.DatabaseHandler;
 using Tooth_Booth_.models;
@@ -112,9 +111,10 @@ namespace Tooth_Booth_.View
         }
         private int SelectClinic(List<string> clinicNames)
         {
-            int index = -1, i = 0;
+            int index = -1;
             while (true)
             {
+                int i = 0;
                 Console.WriteLine(PrintStatements.listOfClinicPrint);
                 foreach (var name in clinicNames)
                 {

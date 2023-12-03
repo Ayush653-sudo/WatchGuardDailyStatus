@@ -95,6 +95,7 @@ namespace Tooth_Booth_.common
         public static string chooseDentistCategory="Choose Dentist Category.";
         public static string registerDentistSucessful = "You have registered dentist sucessfully!!";
         public static string tryAgain = "Please try again ";
+        public static string prescriptionAdded = "Prescription added sucessfully";
         public static string frontScreenMenu = "Hi! Welcome to ToothBooth " +
            "\nPress 1 to Login"
            + "\nPress 2 to SignUp" +

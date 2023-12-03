@@ -63,24 +63,124 @@ namespace Tooth_Booth_.test.Common.test
             Assert.AreEqual(expected, actual);
         }
         [TestMethod]
-        public void CheckRegex_InValidInput_False()
+        public void IsValidEmail_InValidEmailInput_False()
         {
             string sampleInValidString = "ayushsing@gmail";
             string regex = CheckValidity.emailRegex;
             bool expected= false;
-            bool actual = CheckValidity.CheckRegex(sampleInValidString, regex);
+            bool actual = CheckValidity.IsValidEmail(sampleInValidString);
             Assert.AreEqual(expected, actual);
         }
         [TestMethod]
-        public void CheckRegex_ValidInput_true()
+        public void IsValidEmail_ValidEmailInput_true()
         {
-            string sampleInValidString = "ayushsing@gmail.com";
+            string sampleValidString = "ayushsing@gmail.com";
             string regex = CheckValidity.emailRegex;
+            bool expected = true;
+            bool actual = CheckValidity.IsValidEmail(sampleValidString);
+            Assert.AreEqual(expected, actual);
+        }
+        [TestMethod]
+        public void IsValidPhoneNumber_ValidPhoneInput_true()
+        {
+            string sampleInValidString = "9636653732";
+            bool expected = true;
+            bool actual = CheckValidity.IsValidPhoneNumber(sampleInValidString);
+            Assert.AreEqual(expected, actual);
+        }
+        [TestMethod]
+        public void IsValidPhoneNumber_InValidPhoneInput_false()
+        {
+            string sampleInValidString = "96366537";
+            bool expected = false;
+            bool actual = CheckValidity.IsValidPhoneNumber(sampleInValidString);
+            Assert.AreEqual(expected, actual);
+        }
+        [TestMethod]
+        public void IsUserNameNotValid_ValidUserNameInput_false()
+        {
+            string sampleValidString = "ayush22";
+            bool expected = false;
+            bool actual = CheckValidity.IsUserNameNotValid(sampleValidString);
+            Assert.AreEqual(expected, actual);
+        }
+        [TestMethod]
+        public void IsUserNameNotValid_InValidUserNameInput_true()
+        {
+            string sampleInValidString = " ";
+            bool expected = true;
+            bool actual = CheckValidity.IsUserNameNotValid(sampleInValidString);
+            Assert.AreEqual(expected, actual);
+        }
+        [TestMethod]
+ 
+        public void CheckRegex_ValidOnlyAlphabet_true()
+        {
+            string sampleInValidString = "AaA";
+            string regex = CheckValidity.hasOnlyAlphabet;
             bool expected = true;
             bool actual = CheckValidity.CheckRegex(sampleInValidString, regex);
             Assert.AreEqual(expected, actual);
         }
+        [TestMethod]
+        public void CheckRegex_InValidOnlyAlphabet_true()
+        {
+            string sampleInValidString = "Aa2A";
+            string regex = CheckValidity.hasOnlyAlphabet;
+            bool expected = false;
+            bool actual = CheckValidity.CheckRegex(sampleInValidString, regex);
+            Assert.AreEqual(expected, actual);
+        }
+        [TestMethod]
+        public void IsValidPassword_InValidPassword_false()
+        {
+            string sampleInValidString = "Aa2A";
+            bool expected = false;
+            bool actual = CheckValidity.IsValidPassword(sampleInValidString);
+            Assert.AreEqual(expected, actual);
+        }
+        [TestMethod]
+        public void IsValidPassword_ValidPassword_true()
+        {
+            string sampleValidString = "Ayus@223";
+            bool expected = true;
+            bool actual = CheckValidity.IsValidPassword(sampleValidString);
+            Assert.AreEqual(expected, actual);
+        }
 
+        [TestMethod]
+        public void IsNotValidClinicName_ValidClinicName_false()
+        {
+            string sampleValidString = "RoomShoom";
+            bool expected = false;
+            bool actual=CheckValidity.IsNotValidClinicName(sampleValidString);
+            Assert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void IsNotValidClinicName_InValidClinicName_false()
+        {
+            string sampleInValidString = "";
+            bool expected = true;
+            bool actual = CheckValidity.IsNotValidClinicName(sampleInValidString);
+            Assert.AreEqual(expected, actual);
+        }
+        [TestMethod]
+        public void IsNotValidClinicCity_ValidClinicCity_false()
+        {
+            string sampleValidString = "Rawatbhata";
+            bool expected = false;
+            bool actual = CheckValidity.IsNotValidClinicCity(sampleValidString);
+            Assert.AreEqual(expected, actual);
+        }
+        [TestMethod]
+        public void IsNotValidClinicCity_InValidClinicCity_true()
+        {
+            string sampleValidString = "Ra";
+            bool expected = true;
+            bool actual = CheckValidity.IsNotValidClinicCity(sampleValidString);
+            Assert.AreEqual(expected, actual);
+        }
 
 
     }

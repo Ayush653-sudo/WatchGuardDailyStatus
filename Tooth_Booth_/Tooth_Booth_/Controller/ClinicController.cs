@@ -10,7 +10,7 @@ namespace Tooth_Booth_.Controller
 {
 
 
-    class ClinicController : IClinicControllerForSuperAdmin, IClinicControllerForPatient
+   public class ClinicController : IClinicControllerForSuperAdmin, IClinicControllerForPatient
     {
 
         IDBHandler<Dentist> dentistDBHandler;
@@ -66,12 +66,14 @@ namespace Tooth_Booth_.Controller
             }
             List<User>listOfUser=userDBHandler.GetList();
             List<Dentist> listOfDentist = dentistDBHandler.GetList();
-            var listOfDentistToRemoved=from dentist in listOfDentist where dentist.clinicName==clinic.clinicName select dentist;
-            if (clinicDBHandler.Delete(clinic))
+            var listOfDentistToRemoved=listOfDentist.FindAll((dentist)=>dentist.clinicName==clinic.clinicName);
+               // from dentist in listOfDentist where dentist.clinicName==clinic.clinicName select dentist;
+            if (!clinicDBHandler.Delete(clinic))
                 return false;
             foreach (var obj in listOfDentistToRemoved)
             {
-                if (!userDBHandler.Delete(listOfUser.Find((user) => user.userName.Equals(obj.userName))!))
+                var user = listOfUser.Find((use) => use.userName == obj.userName);
+                if (!userDBHandler.Delete(user!))
                     return false;
                 if (!dentistDBHandler.Delete(obj))
                     return false;

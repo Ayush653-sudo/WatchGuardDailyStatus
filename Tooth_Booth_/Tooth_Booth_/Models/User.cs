@@ -31,6 +31,7 @@ namespace Tooth_Booth_.models
             this.userType=user.userType;
                 
         }
-        
+      
+
     }
 }

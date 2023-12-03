@@ -31,7 +31,7 @@ namespace Tooth_Booth_.DatabaseHandler
             {
 
 
-                ExceptionDBHandler.handler.AddEntryToFile(ex.ToString());
+                ExceptionDBHandler.handler.AddEntryToFile(ex.Message.ToString());
                 Message.Invalid(PrintStatements.someThingWentWrong);
 
             }
@@ -61,7 +61,7 @@ namespace Tooth_Booth_.DatabaseHandler
         }
         public bool Delete(Dentist dentist)
         {
-            int index = listOfDentist.FindIndex((obj) => obj.userName.Equals(dentist.userName));
+            int index = listOfDentist.FindIndex((obj) => obj.userName==dentist.userName);
             listOfDentist.RemoveAt(index);
             return UpdateEntryAtDB<Dentist>(dentistPath, listOfDentist);
         }

@@ -5,7 +5,6 @@ using Tooth_Booth_.common.Enums;
 using Tooth_Booth_.Config;
 using Tooth_Booth_.Controller.ControllerInterfaces;
 using Tooth_Booth_.database;
-using Tooth_Booth_.DatabaseHandler;
 using Tooth_Booth_.models;
 using Tooth_Booth_.View;
 using Tooth_Booth_.View.Interfaces;
@@ -35,7 +34,7 @@ namespace Tooth_Booth_.Controller
             return listOfUser.Find((obj) => obj.userName == logInCred["username"] && obj.password == logInCred["password"])!;
 
         }
-        public bool isPresentEarlier(string userName)
+        public bool IsPresentEarlier(string userName)
         {
 
             List<User> listOfUser = userDBHandler.GetList();
@@ -89,7 +88,7 @@ namespace Tooth_Booth_.Controller
         {
 
             User obj = _authDashboard.RegistrationView();
-            if (!isPresentEarlier(obj.userName))
+            if (!IsPresentEarlier(obj.userName))
             {
                 if (userDBHandler.Add(obj))
                 {
@@ -97,7 +96,7 @@ namespace Tooth_Booth_.Controller
                     {
                         Clinic clinicObj = RegistrationFoam.ClinicRegistrationDetails(obj.userName);
                         int index=clinicDBHandler.GetList().FindIndex((obj)=>obj.clinicName==clinicObj.clinicName);
-                        if(index==-1)
+                        if(index!=-1)
                         {
                             Message.Invalid("Clinic with this clinic name is already present");
                             userDBHandler.Delete(obj);

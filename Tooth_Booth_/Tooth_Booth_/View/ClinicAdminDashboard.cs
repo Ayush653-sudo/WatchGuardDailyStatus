@@ -65,7 +65,7 @@ namespace Tooth_Booth_.View
             Console.WriteLine(PrintStatements.dentistUserNameToChange);
             var userName = Console.ReadLine()!.Trim();
 
-            if (dentistController.DeleteDentistAtClinic(obj.listOFClinicAdmin[0], userName))
+            if (dentistController.DeleteDentistAtClinic(obj.clinicName, userName))
                 Console.WriteLine(PrintStatements.updateSucessFully);
             else
             {

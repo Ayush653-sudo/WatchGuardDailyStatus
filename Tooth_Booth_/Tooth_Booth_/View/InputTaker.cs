@@ -38,7 +38,7 @@ namespace Tooth_Booth_.View
                 Console.WriteLine(printStatement);
                 userName = Console.ReadLine()!.Trim();
 
-                if (CheckValidity.NullCheck(userName) || CheckValidity.IsNotValidLength(userName, 5) || !CheckValidity.CheckRegex(userName, CheckValidity.hasOnlyAlphaNumeric))
+                if (CheckValidity.IsUserNameNotValid(userName))
                 {
 
                     Console.WriteLine(PrintStatements.erroruserNamePrint);
@@ -61,7 +61,7 @@ namespace Tooth_Booth_.View
 
                 password = MaskPassword();
 
-                var isValidated = CheckValidity.CheckRegex(password, CheckValidity.hNumber) && CheckValidity.CheckRegex(password, CheckValidity.hasUpperChar) && CheckValidity.CheckRegex(password, CheckValidity.hasMinimum5Chars) && CheckValidity.CheckRegex(password, CheckValidity.hasSymbols);
+                var isValidated = CheckValidity.IsValidPassword(password);
 
                 if (!isValidated)
                 {
@@ -84,7 +84,7 @@ namespace Tooth_Booth_.View
                 Console.WriteLine(PrintStatements.emailAddressPrint);
                 emailAddress = Console.ReadLine()!.Trim();
 
-                if (!CheckValidity.CheckRegex(emailAddress, CheckValidity.emailRegex))
+                if (!CheckValidity.IsValidEmail(emailAddress))
                 {
                     Console.WriteLine(PrintStatements.erorEmailPrint);
 
@@ -105,7 +105,7 @@ namespace Tooth_Booth_.View
 
                 phoneNumber = Console.ReadLine()!.Trim();
 
-                bool isValidated = CheckValidity.CheckRegex(phoneNumber, CheckValidity.hasnumber);
+                bool isValidated = CheckValidity.IsValidPhoneNumber(phoneNumber);
                 if (!isValidated)
                 {
                     Console.WriteLine(PrintStatements.errorPhoneNumberPrint);
@@ -127,7 +127,7 @@ namespace Tooth_Booth_.View
                 Console.WriteLine(printStatement);
                 clinicName = Console.ReadLine()!.Trim();
 
-                if (CheckValidity.IsNotValidLength(clinicName, 6) || CheckValidity.NullCheck(clinicName))
+                if (CheckValidity.IsNotValidClinicName(clinicName))
                 {
 
                     Console.WriteLine(PrintStatements.errorClinicPrint);
@@ -165,7 +165,7 @@ namespace Tooth_Booth_.View
             {
                 Console.WriteLine(printStatement);
                 clinicCity = Console.ReadLine()!.ToLower().Trim();
-                if (CheckValidity.NullCheck(clinicCity) || !CheckValidity.CheckRegex(clinicCity, CheckValidity.hasOnlyAlphabet) || CheckValidity.IsNotValidLength(clinicCity, 3))
+                if (CheckValidity.IsNotValidClinicCity(clinicCity))
                 {
                     Console.WriteLine(PrintStatements.errorClinicCityPrint);
 

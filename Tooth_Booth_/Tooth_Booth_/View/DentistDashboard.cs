@@ -20,7 +20,7 @@ namespace Tooth_Booth_.View
         public void DentistDashboardView(User dentistUser)
         {
 
-            Dentist dentist = dentistController.GetDentist(dentistUser.userName);
+            Dentist dentist = dentistController.GetDentistByUserName(dentistUser.userName);
             while (true)
             {
                 Console.WriteLine();
@@ -57,7 +57,6 @@ namespace Tooth_Booth_.View
                             break;
 
                     }
-
 
                 }
                 catch (Exception ex) 
@@ -143,7 +142,15 @@ namespace Tooth_Booth_.View
             {
                 var prescription = InputTaker.AddPrescription(PrintStatements.addIt);
                 appointment.prescription = prescription;
-                appointmentController.AddPrescriptionToAppointment(appointment);
+                bool isTrue=appointmentController.AddPrescriptionToAppointment(appointment);
+                if (isTrue)
+                {
+                    Console.WriteLine(PrintStatements.prescriptionAdded);
+                }
+                else
+                {
+                    Console.WriteLine(PrintStatements.someThingWentWrong);
+                }
                 
             }
 
@@ -152,7 +159,7 @@ namespace Tooth_Booth_.View
         void SelectMaxAppointment(Dentist dentist)
         {
 
-            int maxAppointment=InputTaker.MaximumAppointmentInput(PrintStatements.maximumNumberOfAppointment);                
+                int maxAppointment=InputTaker.MaximumAppointmentInput(PrintStatements.maximumNumberOfAppointment);                
                 dentist.maxAppointment = maxAppointment;
                 if (dentistController.UpdateDentistAtDB(dentist))
                     Console.WriteLine(PrintStatements.updateSucessFully);

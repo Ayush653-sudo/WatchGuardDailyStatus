@@ -28,13 +28,6 @@
     "userType": 1
   },
   {
-    "userName": "drayush",
-    "password": "Ayush@22",
-    "emailAddress": "ayushsing@gmal.com",
-    "phoneNumber": "9436653732",
-    "userType": 2
-  },
-  {
     "userName": "tomar",
     "password": "Ayush@22",
     "emailAddress": "ayush@gmail.com",
@@ -82,5 +75,12 @@
     "emailAddress": "kvamvvc@gmail.com",
     "phoneNumber": "9636653732",
     "userType": 1
+  },
+  {
+    "userName": "admin22",
+    "password": "Admin@222",
+    "emailAddress": "admin@gmail.com",
+    "phoneNumber": "9636653732",
+    "userType": 0
   }
 ]

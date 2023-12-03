@@ -47,6 +47,31 @@ namespace Tooth_Booth_.common
             return Regex.IsMatch(str, regexString, RegexOptions.IgnoreCase);
 
         }
+        public static bool IsUserNameNotValid(string userName)
+        {
+            return CheckValidity.NullCheck(userName) || CheckValidity.IsNotValidLength(userName, 5) || !CheckValidity.CheckRegex(userName, CheckValidity.hasOnlyAlphaNumeric);
+        }
+        public static bool IsValidPassword(String password)
+        {
+            return CheckValidity.CheckRegex(password, CheckValidity.hNumber) && CheckValidity.CheckRegex(password, CheckValidity.hasUpperChar) && CheckValidity.CheckRegex(password, CheckValidity.hasMinimum5Chars) && CheckValidity.CheckRegex(password, CheckValidity.hasSymbols);
+        }
+
+        public static bool IsValidEmail(string emailAddress)
+        {
+           return CheckValidity.CheckRegex(emailAddress, CheckValidity.emailRegex);
+        }
+        public static bool IsValidPhoneNumber(string phoneNumber)
+        {
+            return CheckValidity.CheckRegex(phoneNumber, CheckValidity.hasnumber); 
+        }
+        public static bool IsNotValidClinicName(string clinicName)
+        {
+            return CheckValidity.IsNotValidLength(clinicName, 6) || CheckValidity.NullCheck(clinicName);
+        }
+        public static bool IsNotValidClinicCity(string clinicCity)
+        {
+            return CheckValidity.NullCheck(clinicCity) || !CheckValidity.CheckRegex(clinicCity, CheckValidity.hasOnlyAlphabet) || CheckValidity.IsNotValidLength(clinicCity, 3);
+        }
 
 
 

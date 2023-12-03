@@ -5,7 +5,7 @@ namespace Tooth_Booth_.Controller.Interfaces
     public interface IDentistControllerForDentist
     {
         bool DeleteDentistAtClinic(string clinicUserName, string userName);
-        Dentist GetDentist(string userName);
+        Dentist GetDentistByUserName(string userName);
         List<Dentist> GetDentistAtClinic(string clinicUserName);
         Dictionary<string, string> GetDentistList(string clinicName);
         bool RegisterNewDentistAtClinic(User user, Dentist dentist);
