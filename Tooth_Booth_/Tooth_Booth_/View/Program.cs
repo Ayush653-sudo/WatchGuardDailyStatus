@@ -47,7 +47,8 @@ class Program
                         break;
                 }
             }
-            catch(Exception ex) {
+            catch(Exception ex) 
+            {
 
                 ExceptionDBHandler.handler.AddEntryToFile(ex.ToString());
                 Message.Invalid(PrintStatements.giveCorrectInput);

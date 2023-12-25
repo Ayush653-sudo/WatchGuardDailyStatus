@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace RealEstateApi.Models
 {
+   
     public class Property
     {
         public int Id {  get; set; }

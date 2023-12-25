@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using WebApplication2.Models;
 
 
 namespace WebApplication2
@@ -30,6 +30,7 @@ namespace WebApplication2
 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddSingleton<IEmployeeRepository,MockEmployeeRespository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -39,17 +40,22 @@ namespace WebApplication2
             {
                 app.UseDeveloperExceptionPage();
             }
-            else
-            {
-                app.UseExceptionHandler("/Error");
-                app.UseHsts();
-            }
+            //else if(env.IsStaging()||env.IsProduction())
+            //{
+            //    app.UseExceptionHandler("/Error");
+            //    app.UseHsts();
+            //}
 
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
-            app.UseCookiePolicy();
-
+           app.UseStaticFiles();
             app.UseMvc();
+            app.UseCookiePolicy();
+            app.Run(async (context) =>
+            {
+                await context.Response.WriteAsync("Hello World " );
+
+            });
+        
         }
     }
 }
